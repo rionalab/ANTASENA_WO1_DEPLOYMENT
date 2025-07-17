@@ -1,0 +1,1286 @@
+﻿@{
+    ViewBag.Title = "Laporan Detail Absensi";
+    Layout = "~/Views/Shared/_LayoutMaster.cshtml";
+}
+
+@*@Styles.Render("~/bundles/customcss")*@
+
+
+<div class="modal" id="mdlDetail">
+    <div class="modal-dialog modal-xl">
+        <form id="formInput">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Detil Absensi</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="form-horizontal">
+
+                        <table id="tbl_detailLRA" class="table table-bordered table-condensed table-striped dataTable no-footer">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">Bank</th>
+                                    <th rowspan="2">Kelompok Informasi</th>
+                                    <th rowspan="2">Informasi</th>
+                                    <th rowspan="2">Version Code</th>
+                                    <th rowspan="2">Periode Laporan</th>
+                                    <th rowspan="2">Periode Data</th>
+                                    <th rowspan="2">Tanggal Pengiriman</th>
+                                    <th colspan="2">Jumlah Baris</th>
+                                </tr>
+                                <tr>
+                                    <th>Laporan</th>
+                                    <th>Koreksi</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button class="btn btn-default" id="btnClose" data-dismiss="modal">Tutup</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                <h4 class="c-grey-900 mB-20">@ViewBag.Title</h4>
+                @*<button id="btnAdd" class="btn btn-sm btn-primary">Tambah Baru</button>*@
+                <div class="form-horizontal">
+                    <form id="fm_InputLSP">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 control-label text-right">Cakupan Data<span style="color:red"> *</span></label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control input-sm" type="text" required id="dd_CakupanDt" name="dd_CakupanDt">
+                                            <option value=""></option>
+                                            <option value="1">Individual</option>
+                                            <option value="0">Gabungan</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-4 control-label text-right">Jenis Kegiatan<span style="color:red"> *</span></label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="dd_JenisKegiatan" name="dd_JenisKegiatan" required disabled></select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 control-label text-right">Sandi Bank<span style="color:red"> *</span></label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="dd_SandiBank" name="dd_SandiBank" required disabled></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-4 control-label text-right">Bank<span style="color:red"> *</span></label>
+                                    <div class="col-sm-8">
+                                        <select style="width:92%" class="" type="text" id="dd_Bank" name="dd_Bank" multiple="multiple" placeholder="-- Pilih Bank --"></select>
+                                        @*<select class="form-control input-sm" type="text" required id="dd_Bank" name="dd_Bank" multiple="multiple"></select>*@
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-4 control-label text-right">Kelompok Informasi<span style="color:red"> *</span></label>
+                                    <div class="col-sm-8">
+                                        @*<select style="width:92%" class="" type="text" id="dd_KelInformasi" name="dd_KelInformasi" multiple="multiple" placeholder="-- Pilih Kelompok Informasi --"></select>*@
+                                        <select class="form-control input-sm" type="text" required id="dd_KelInformasi" name="dd_KelInformasi"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    @*<label class="col-sm-4 control-label text-right">Informasi<span style="color:red"> *</span></label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control input-sm" type="text" required id="dd_Informasi" name="dd_Informasi" multiple="multiple"></select>
+                                        </div>*@
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-5 control-label text-right">Periode Laporan<span style="color:red"> *</span></label>
+                                    <div class="col-sm-7">
+                                        <select required class="form-control" id="PeriodLap">
+                                            <option value="">-- Pilih Data --</option>
+                                            <option value="Harian">Harian</option>
+                                            <option value="Mingguan">Mingguan</option>
+                                            <option value="Bulanan">Bulanan</option>
+                                            <option value="Triwulan">Triwulan</option>
+                                            <option value="Semesteran">Semesteran</option>
+                                            <option value="Tahunan">Tahunan</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-5">
+                                        <div class="row text-right">
+                                            <div class="col-sm-10 text-right">
+                                                <select class="form-control" required id="dd_pd">
+                                                    <option value="periodedata">Periode Data</option>
+                                                    <option value="bataswaktupenyampaian">Penyampaian</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-1 text-left"><span style="color:red"> *</span></div>
+                                        </div>
+                                    </div>
+                                    @*<label class="col-sm-5 control-label text-right">Periode Data<span style="color:red"> *</span></label>*@
+                                    <div class="col-sm-7">
+                                        <div id="div_Harian" style="display:none">
+                                            <div class="input-group">
+                                                <input required type="text" class="form-control " id="txtHarian" name="txtHarian">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" id="btnHarian" type="button"><i class="fas fa-calendar-alt"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="div_Mingguan" style="display:none">
+                                            <div class="row">
+                                                <div class="col-md-4 ">
+                                                    <select required class="form-control" type="text" id="dd_MMinggu">
+                                                        <option value="1">Minggu 1</option>
+                                                        <option value="2">Minggu 2</option>
+                                                        <option value="3">Minggu 3</option>
+                                                        <option value="4">Minggu 4</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4 ">
+                                                    <select required class="form-control input-sm" type="text" id="dd_MBulan">
+                                                        <option value="1">Januari</option>
+                                                        <option value="2">Februari</option>
+                                                        <option value="3">Maret</option>
+                                                        <option value="4">April</option>
+                                                        <option value="5">Mei</option>
+                                                        <option value="6">Juni</option>
+                                                        <option value="7">Juli</option>
+                                                        <option value="8">Agustus</option>
+                                                        <option value="9">September</option>
+                                                        <option value="10">Oktober</option>
+                                                        <option value="11">November</option>
+                                                        <option value="12">Desember</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <select required class="form-control input-sm" type="text" id="dd_MTahun"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="div_Bulanan" style="display:none">
+                                            <div class="row">
+                                                <div class="col-md-6 ">
+                                                    <select required class="form-control input-sm" type="text" id="dd_BBulan">
+                                                        <option value="1">Januari</option>
+                                                        <option value="2">Februari</option>
+                                                        <option value="3">Maret</option>
+                                                        <option value="4">April</option>
+                                                        <option value="5">Mei</option>
+                                                        <option value="6">Juni</option>
+                                                        <option value="7">Juli</option>
+                                                        <option value="8">Agustus</option>
+                                                        <option value="9">September</option>
+                                                        <option value="10">Oktober</option>
+                                                        <option value="11">November</option>
+                                                        <option value="12">Desember</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <select required class="form-control input-sm" type="text" id="dd_BTahun"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="div_Triwulan" style="display:none">
+                                            <div class="row">
+                                                <div class="col-md-6 ">
+                                                    <select required class="form-control" type="text" id="dd_Triwulan">
+                                                        <option value="1">Triwulan 1</option>
+                                                        <option value="2">Triwulan 2</option>
+                                                        <option value="3">Triwulan 3</option>
+                                                        <option value="4">Triwulan 4</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <select required class="form-control input-sm" type="text" id="dd_TTahun"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="div_Semester" style="display:none">
+                                            <div class="row">
+                                                <div class="col-md-6 ">
+                                                    <select class="form-control" type="text" required id="dd_Semester">
+                                                        <option value="1">Semester 1</option>
+                                                        <option value="2">Semester 2</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <select class="form-control input-sm" type="text" required id="dd_STahun"></select>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div id="div_Tahun" style="display:none">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <select class="form-control input-sm" type="text" required id="dd_THTahun"></select>
+                                                </div>
+                                                <div class="col-md-6"></div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-5 control-label text-right">Wilayah Kerja BI<span style="color:red"> *</span></label>
+                                    <div class="col-sm-7">
+                                        <select style="width:92%" class="" type="text" id="wilayahkerja" name="wilayahkerja" multiple="multiple" placeholder="-- Pilih Wilayah Kerja --"></select>
+                                        @*<select required class="form-control" id="wilayahkerja"></select>*@
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-5 control-label text-right">Status<span style="color:red"> *</span></label>
+                                    <div class="col-sm-7">
+                                        <select style="width:92%" class="" type="text" id="StatusPLap" name="StatusPLap" multiple="multiple" placeholder="-- Pilih Status --"></select>
+                                        @*<select required class="form-control" id="StatusPLap"></select>*@
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-12 text-right">
+                                <input type="hidden" id="txtpage" value="100" />
+                                @*<a class="btn btn-primary" id="id-eksCSV" href="@Url.Action("exportCSV", "LapRincianGagalValidasi", null, Request.Url.Scheme)"><span class="fa fa-file-excel"></span> Eksport CSV</a>*@
+                                @*<a class="btn btn-primary" id="id-eksCSV" href="@Url.Action("exportCSV", "LapStatusPenyampaian", new {Cakupan="testing123",IdPelapor="ttt543" }, Request.Url.Scheme)"><span class="fa fa-file-excel"></span> Eksport CSV</a>*@
+                                @*<button type="button" id="Eks_Excle" class="btn btn-info"><span class="fa fa-file-excel"></span> Ekspor ke Excle</button>*@
+                                <button type="submit" id="id_Lihat" class="btn btn-info"><span class="fa fa-search"></span> Lihat</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <br />
+                <br />
+                <div id="div-dtTbl" style="display:none">
+                    <div id="dt_tbl"></div>
+                    @*<table id="dataTableRGV" class="table table-responsive  table-sm table-striped table-bordered" cellspacing="0" width="100%"></table>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<form id="formexppdf" method="post" action="@Url.Action("DownloadPdf", "LapRincianAbsensi", null, Request.Url.Scheme)" target="_blank">
+    <input type="hidden" name="Cakupan" id="Cp_Cakupan" />
+    <input type="hidden" name="IdPelapor" id="Cp_IdPelapor" />
+    <input type="hidden" name="KelInformasi" id="Cp_KelInformasi" />
+    <input type="hidden" name="Periode" id="Cp_Periode" />
+    <input type="hidden" name="Harian" id="Cp_Harian" />
+    <input type="hidden" name="Minggu" id="Cp_Minggu" />
+    <input type="hidden" name="MBulan" id="Cp_MBulan" />
+    <input type="hidden" name="MTahun" id="Cp_MTahun" />
+    <input type="hidden" name="BBulan" id="Cp_BBulan" />
+    <input type="hidden" name="BTahun" id="Cp_BTahun" />
+    <input type="hidden" name="Triwulan" id="Cp_Triwulan" />
+    <input type="hidden" name="TTahun" id="Cp_TTahun" />
+    <input type="hidden" name="Semester" id="Cp_Semester" />
+    <input type="hidden" name="STahun" id="Cp_STahun" />
+    <input type="hidden" name="Status" id="Cp_Status" />
+    <input type="hidden" name="wilayahkerja" id="Cp_wilayahkerja" />
+    <input type="hidden" name="pdata_penyampaian" id="Cp_pdata_penyampaian" />
+</form>
+<div id="cpdt" style="display:none;"></div>
+<div id="clndt"></div>
+<script>
+
+    function cpdata() {
+        $("#Cp_Cakupan").val($("#dd_CakupanDt").val());
+        $("#Cp_IdPelapor").val($("#dd_Bank").val().join());
+
+        $("#Cp_KelInformasi").val($("#dd_KelInformasi").val());
+        $("#Cp_Periode").val($("#PeriodLap").val());
+        $("#Cp_Harian").val($("#txtHarian").val());
+        $("#Cp_Minggu").val($("#dd_MMinggu").val());
+        $("#Cp_MBulan").val($("#dd_MBulan").val());
+        $("#Cp_MTahun").val($("#dd_MTahun").val());
+        $("#Cp_BBulan").val($("#dd_BBulan").val());
+        $("#Cp_BTahun").val($("#dd_BTahun").val());
+        $("#Cp_Triwulan").val($("#dd_Triwulan").val());
+        $("#Cp_TTahun").val($("#dd_TTahun").val());
+        $("#Cp_Semester").val($("#dd_Semester").val());
+        $("#Cp_STahun").val($("#dd_STahun").val());
+        $("#Cp_Status").val($("#StatusPLap").val());
+        $("#Cp_wilayahkerja").val($("#wilayahkerja").val());
+        $("#Cp_pdata_penyampaian").val($("#dd_pd").val());
+
+    }
+    function exportXLS() {
+
+        $("#tblexp .empt").empty();
+
+        $("#tblexp").table2excel({
+            name: "Laporan Detail Absensi",
+            filename: "Laporan Detail Absensi.xls", // do include extension
+            preserveColors: false // set to true if you want background colors and font colors preserved
+        });
+    }
+
+    function showPDF() {
+        $("#formexppdf").submit();
+    }
+    $(document).ready(function () {
+        getDD_KelInformasi();
+        getDD_StatusPLap();
+        getDD_WilayahKerja("","");
+        $("#dd_CakupanDt").select2({
+            placeholder: "-- Pilih Data --",
+            allowClear: true,
+            width: '100%'
+        });
+        $("#dd_CakupanDt").val("").trigger("change");
+        //$("#dd_Bank").select2({
+        //    placeholder: "-- Pilih Data --",
+        //    allowClear: true,
+        //    width: '100%',
+        //});
+        //$("#dd_Bank").prop("disabled", true);
+        $("#dd_Bank").multipleSelect().multipleSelect('disable');
+        //$("#dd_KelInformasi").multipleSelect();
+        $("#wilayahkerja").multipleSelect();
+        $("#StatusPLap").multipleSelect();
+
+        $("#dd_KelInformasi").select2({
+            placeholder: "-- Pilih Data --",
+            allowClear: true,
+            width: '100%'
+        });
+        //$("#dd_Informasi").select2({
+        //    placeholder: "-- Pilih Data --",
+        //    allowClear: true,
+        //    width: '100%'
+        //});
+        //$("#dd_Informasi").prop("disabled", true);
+        //$("#wilayahkerja").select2({
+        //    placeholder: "-- Pilih Data --",
+        //    allowClear: true,
+        //    width: '100%'
+        //});
+        $("#PeriodLap").select2({
+            placeholder: "-- Pilih Data --",
+            allowClear: true,
+            width: '100%'
+        });
+        $("#PeriodLap").val("").trigger("change");
+        //$("#StatusPLap").select2({
+        //    placeholder: "-- Pilih Data --",
+        //    allowClear: true,
+        //    width: '100%'
+        //});
+
+        //var iTahun = new Date().getFullYear();
+        //var iHtml = "";
+        //for (var i = 0; i < 5; i++) {
+        //    var ithn = iTahun + i;
+        //    iHtml = iHtml+ '<option value="' + ithn + '">' + ithn +'</option>';
+        //}
+        $("#dd_MTahun").html(iHtml);
+        $("#dd_BTahun").html(iHtml);
+        $("#dd_TTahun").html(iHtml);
+        $("#dd_STahun").html(iHtml);
+
+
+        document.getElementById("txtHarian").onkeypress = false;
+        $("#txtHarian").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'dd-mm-yy'
+        });
+        $("#btnHarian").click(function () {
+            $("#txtHarian").datepicker("show");
+        });
+
+
+        $("#dd_pd").select2({
+            width: '75%'
+        });
+        $("#dd_MMinggu").select2({
+            placeholder: "-- Pilih Data --",
+            allowClear: true,
+            width: '100%'
+        });
+        $("#dd_MBulan").select2({
+            placeholder: "-- Pilih Data --",
+            allowClear: true,
+            width: '100%'
+        });
+        $("#dd_MTahun").select2({
+            placeholder: "-- Pilih Data --",
+            allowClear: true,
+            width: '100%'
+        });
+
+        $("#dd_BBulan").select2({
+            placeholder: "-- Pilih Data --",
+            allowClear: true,
+            width: '100%'
+        });
+        $("#dd_BTahun").select2({
+            placeholder: "-- Pilih Data --",
+            allowClear: true,
+            width: '100%'
+        });
+
+        $("#dd_Triwulan").select2({
+            placeholder: "-- Pilih Data --",
+            allowClear: true,
+            width: '100%'
+        });
+        $("#dd_TTahun").select2({
+            placeholder: "-- Pilih Data --",
+            allowClear: true,
+            width: '100%'
+        });
+
+        $("#dd_Semester").select2({
+            placeholder: "-- Pilih Data --",
+            allowClear: true,
+            width: '100%'
+        });
+        $("#dd_STahun").select2({
+            placeholder: "-- Pilih Data --",
+            allowClear: true,
+            width: '100%'
+        });
+
+        $("#dd_JenisKegiatan").select2({ placeholder: "--Pilih Jenis Kegiatan--", allowClear: true, width: '100%' });
+        $("#dd_SandiBank").select2({ placeholder: "--Pilih Sandi Bank--", allowClear: true, width: '100%' });
+        $("#dd_JenisKegiatan").on("change", function () {
+            getdd_SandiBank(this.value);
+        });
+
+        $("#dd_CakupanDt").on("change", function () {
+            getdd_JenisKegiatan(this.value);
+            //getDD_Bank(this.value,"");
+            //setToExport();
+        });
+        $("#dd_SandiBank").on("change", function () {
+            getDD_Bank(this.value,"");
+            //setToExport();
+        });
+        $("#dd_KelInformasi").on("change", function () {
+            //getDD_Informasi($("#dd_KelInformasi").val().join(),"");
+            //setToExport();
+        });
+        $("#PeriodLap").on("change", function () {
+            var iperiode = this.value;
+
+            const els =  { 
+                Harian : document.getElementById("div_Harian"),
+                Mingguan : document.getElementById("div_Mingguan"),
+                Bulanan : document.getElementById("div_Bulanan"),
+                Triwulan : document.getElementById("div_Triwulan"),
+                Semesteran : document.getElementById("div_Semester"),
+                Tahunan : document.getElementById("div_Tahun")
+            }
+
+            Object.values(els).forEach(el => {
+                el.style.display = "none";
+            });
+
+            els[iperiode].style.display = "block";
+
+            if(iperiode !== "Tahunan") { 
+                $("#dd_THTahun").removeAttr('required');
+            }
+
+            if (iperiode == "Harian") {
+                $("#txtHarian").attr('required', '');
+                $("#dd_pd").val("bataswaktupenyampaian").change();
+                getDD_StatusPLap(true);
+            }
+            else {
+                $("#txtHarian").removeAttr('required');
+                $("#dd_pd").val("periodedata").change();
+                getDD_StatusPLap(false);
+            }
+        });
+
+        var iCakupan = "@ViewBag.Cakupan";
+        if (iCakupan != "") {
+            setValFilter();
+            lihat();
+        }
+    });
+
+    function setValFilter() {
+        $("#dd_CakupanDt").select2('val', '@ViewBag.Cakupan');
+        //getDD_Bank('@ViewBag.Cakupan', '1');
+        //getDD_Informasi('@ViewBag.KelInformasi', "1");
+        $("#PeriodLap").select2('val', '@ViewBag.Periode');
+        $("#txtHarian").val('@ViewBag.Harian');
+        $("#dd_MMinggu").select2('val', '@ViewBag.Minggu');
+        $("#dd_MBulan").select2('val', '@ViewBag.MBulan');
+        $("#dd_MTahun").select2('val', '@ViewBag.MTahun');
+        $("#dd_BBulan").select2('val', '@ViewBag.BBulan');
+        $("#dd_BTahun").select2('val', '@ViewBag.BTahun');
+        $("#dd_pd").select2('val', '@ViewBag.pdata_penyampaian');
+        $("#dd_Triwulan").select2('val', '@ViewBag.Triwulan');
+        $("#dd_TTahun").select2('val', '@ViewBag.TTahun');
+        $("#dd_Semester").select2('val', '@ViewBag.Semester');
+        $("#dd_STahun").select2('val', '@ViewBag.STahun');
+        getDD_WilayahKerja('@ViewBag.wilayahkerja','1');
+    }
+    function lihat() {
+        setTimeout(function () {
+            if ($("#dd_Bank").val() == "" || $("#wilayahkerja").val() == "") {
+            //if ($("#dd_Bank").val() == "" || $("#dd_Informasi").val() == "" || $("#wilayahkerja").val() == "") {
+                lihat();
+            } else {
+                $('#id_Lihat').trigger('click');
+                //setToExport();
+            }
+        }, 100);
+    }
+
+     @*function getDD_Bank(a,act) {
+         //$("#dd_Bank").prop("disabled", true);
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("getDD_Bank", "LapStatusPenyampaian", null, Request.Url.Scheme)?IdPelapor='+a,
+            dataType:'JSON',
+            success: function (e) {
+                reloadlogin(e);
+                //console.log(e);
+                var data = e.data;
+                var html = "";
+
+                //html = html + '<option value=""></option>';
+                for (var i = 0; i < data.length; i++) {
+                    html = html + '<option value="' + data[i].idpelapor + '">' + data[i].instansidesc + '</option>';
+                }
+                $("#dd_Bank").multipleSelect('destroy');
+                $("#dd_Bank").html(html).multipleSelect({
+                    filter: true
+                }).multipleSelect('enable');
+                //$("#dd_Bank").html(html);
+            },
+            complete: function (ee) {
+                //$("#dd_Bank").prop("disabled", false);
+                  var idPel = '@ViewBag.IdPelapor';
+                if (act == "1") {
+                    $("#dd_Bank").multipleSelect('setSelects', idPel.split(','));
+                    //$("#dd_Bank").select2('val', idPel.split(','));
+                } else {
+                    if (idPel != "" && act == "1") {
+                        $("#dd_Bank").multipleSelect('setSelects', idPel.split(','));
+                        //$("#dd_Bank").select2('val', idPel.split(','));
+                    } else {
+                        $("#dd_Bank").multipleSelect('setSelects', '');
+                        //$("#dd_Bank").select2("val", '');
+                    }
+                }
+            }
+        });
+    }*@
+
+
+     function getDD_KelInformasi() {
+         $.ajax({
+             type: 'POST',
+             url: '@Url.Action("getDD_KelInformasi", "LapStatusPenyampaian", null, Request.Url.Scheme)',
+             dataType: 'JSON',
+             success: function (e) {
+                 reloadlogin(e);
+                 //console.log(e);
+                 var data = e.data;
+                 var html = "";
+
+                 //html = html + '<option value=""></option>';
+                 for (var i = 0; i < data.length; i++) {
+                     html = html + '<option value="' + data[i].kelInformasi + '">' + data[i].kelInformasiDesc + '</option>';
+                 }
+                 //$("#dd_KelInformasi").multipleSelect('destroy');
+                 //$("#dd_KelInformasi").html(html).multipleSelect({
+                 //    filter: true
+                 //}).multipleSelect('enable');
+                 $("#dd_KelInformasi").html(html);
+
+             },
+             complete: function (ee) {
+                 @*$("#dd_KelInformasi").select2('val', '@ViewBag.KelInformasi');*@
+                 var kelinf = '@ViewBag.KelInformasi';
+                 kelinf = kelinf.replace("_", "&")
+                 console.log(kelinf);
+                 //$("#dd_KelInformasi").multipleSelect('setSelects', kelinf.split(','));
+                $("#dd_KelInformasi").select2('val', kelinf);
+             }
+         });
+     }
+
+     function getDD_Informasi(a,act) {
+         $("#dd_Informasi").prop("disabled", true);
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("getDD_Informasi", "LapStatusPenyampaian", null, Request.Url.Scheme)',
+            data: { KelInformasi: a },
+            dataType:'JSON',
+            success: function (e) {
+                reloadlogin(e);
+                //console.log(e);
+                var data = e.data;
+                var html = "";
+
+                //html = html + '<option value=""></option>';
+                for (var i = 0; i < data.length; i++) {
+                    html = html + '<option value="' + data[i].idinformation + '">' + data[i].informationDesc + '</option>';
+                }
+                $("#dd_Informasi").html(html);
+            },
+            complete: function (ee) {
+                    $("#dd_Informasi").prop("disabled", false);
+                var idInf = '@ViewBag.idinformation';
+                if (idInf != "" && act == "1" ) {
+                        setTimeout(function () {
+                        $("#dd_Informasi").select2('val', idInf.split(','));
+                    }, 100);
+                } else {
+                    $("#dd_Informasi").select2("val", '');
+                }
+            }
+        });
+     }
+
+     function getDD_WilayahKerja(a,act) {
+         $.ajax({
+             type: 'POST',
+             url: '@Url.Action("getDD_WilayahKerja", "LapAbsensi", null, Request.Url.Scheme)',
+             dataType: 'JSON',
+             success: function (e) {
+                 reloadlogin(e);
+                 var data = e.data;
+                 var html = "";
+
+                 //html = html + '<option value=""></option>';
+                 for (var i = 0; i < data.length; i++) {
+                     html = html + '<option value="' + data[i].wilayahkerja + '">' + data[i].wilayahkerjadesc + '</option>';
+                 }
+                 $("#wilayahkerja").multipleSelect('destroy');
+                 $("#wilayahkerja").html(html).multipleSelect({
+                     filter: true
+                 }).multipleSelect('enable');
+                 //$("#wilayahkerja").html(html);
+             },
+             complete: function (ee) {
+                 var iwk = '@ViewBag.wilayahkerja';
+                   @*var kelinf = '@ViewBag.KelInformasi';*@
+                 if (iwk != "") {//&& act == "1" ) {
+                        setTimeout(function () {
+                            $("#wilayahkerja").multipleSelect('setSelects', iwk.split(','));
+                 }, 100);
+                } else {
+                     $("#wilayahkerja").multipleSelect('checkAll');
+                      //$("#wilayahkerja").multipleSelect('setSelects', '');
+                    //$("#wilayahkerja").select2("val", '');
+                }
+             }
+         });
+     }
+
+     function getDD_StatusPLap(harian = false) {
+         $.ajax({
+             type: 'POST',
+             url: '@Url.Action("getDD_StatusPLap", "LapAbsensi", null, Request.Url.Scheme)',
+             dataType: 'JSON',
+             success: function (e) {
+                 reloadlogin(e);
+                 var data = e.data;
+                 var html = "";
+
+                 if (harian == true) {
+                     for (var i = 0; i < data.length; i++) {
+                         if (data[i].status == '2;Tepat Waktu Menyampaikan Laporan' || data[i].status == '5;Tidak Menyampaikan Laporan' || data[i].status == '6;Koreksi Di Luar Batas Penyampaian') {
+
+                             html = html + '<option value="' + data[i].status + '">' + data[i].statusdesc + '</option>';
+                         }
+                     }
+                 }
+                 else {
+                     for (var i = 0; i < data.length; i++) {
+                         if (data[i].status != '1;Tidak Wajib Lapor') {
+
+                             html = html + '<option value="' + data[i].status + '">' + data[i].statusdesc + '</option>';
+                         }
+                     }
+                 }
+
+                 //html = html + '<option value=""></option>';
+
+                 $("#StatusPLap").multipleSelect('destroy');
+                 $("#StatusPLap").html(html).multipleSelect({
+                     filter: true
+                 }).multipleSelect('enable');
+                 //$("#StatusPLap").html(html);
+             },
+             complete: function (ee) {
+                 var idInf = '@ViewBag.Status';
+                    if (idInf != "" ) {
+                        setTimeout(function () {
+                            $("#StatusPLap").multipleSelect('setSelects', idInf.trim().split(','));
+                         //$("#StatusPLap").select2('val', '@ViewBag.Status');
+                        }, 100);
+                } else {
+                        $("#StatusPLap").multipleSelect('checkAll');
+                        //$("#StatusPLap").multipleSelect('setSelects', '');
+                     //$("#StatusPLap").select2("val", '');
+                }
+             }
+         });
+     }
+
+
+    function getdd_JenisKegiatan(cakupan) {
+        $("#dd_SandiBank").prop("disabled", true);
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("getDD_JenisKegiatan", "LapAbsensi", null, Request.Url.Scheme)?cakupan=' + cakupan,
+            dataType:'JSON',
+            success: function (e) {
+                reloadlogin(e);
+                var data = e.data;
+                var html = "";
+
+                html = html + '<option value=""></option>';
+                for (var i = 0; i < data.length; i++) {
+                    html = html + '<option value="' + data[i].jeniskegiatan + '">' + data[i].jeniskegiatan + '</option>';
+                }
+
+                //$("#dd_SandiBank").multipleSelect('destroy');
+                //$("#dd_SandiBank").html(html).multipleSelect({
+                //    filter: true
+                //}).multipleSelect('enable');
+                $("#dd_JenisKegiatan").html(html);
+            },
+            complete: function (ee) {
+                var idt = '@ViewBag.jnskegiatan';
+                if (idt != "" ) {
+                         $("#dd_JenisKegiatan").select2("val", idt);
+                        $("#dd_JenisKegiatan").prop("disabled", false);
+                } else {
+                      if (cakupan != "") {
+                          $("#dd_JenisKegiatan").select2("val", "Pilih Semua");
+                          $("#dd_JenisKegiatan").prop("disabled", false);
+                      }
+                }
+
+            }
+        });
+    }
+    function getdd_SandiBank(jnsKegiatan) {
+        $("#Pelaporan").prop("disabled", true);
+        var idata = {
+            jnsKegiatan: jnsKegiatan,
+            cakupan: $("#dd_CakupanDt").val()
+        }
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("getDD_SandiBank", "LapAbsensi", null, Request.Url.Scheme)',
+            data: idata,
+            dataType:'JSON',
+            success: function (e) {
+                reloadlogin(e);
+                var data = e.data;
+                var html = "";
+
+                html = html + '<option value=""></option>';
+                for (var i = 0; i < data.length; i++) {
+                    html = html + '<option value="' + data[i].idpelapor + '">' + data[i].instansidesc + '</option>';
+                }
+
+                //$("#dd_SandiBank").multipleSelect('destroy');
+                //$("#dd_SandiBank").html(html).multipleSelect({
+                //    filter: true
+                //}).multipleSelect('enable');
+                $("#dd_SandiBank").html(html);
+            },
+            complete: function (ee) {
+                 var idt = '@ViewBag.sandibank';
+                if (idt != "" ) {
+                    $("#dd_SandiBank").select2("val", idt);
+                    $("#dd_SandiBank").prop("disabled", false);
+                } else {
+                    $("#dd_SandiBank").select2("val", "");
+                    if (jnsKegiatan != "") {
+                        $("#dd_SandiBank").select2("val", "Pilih Semua");
+                        $("#dd_SandiBank").prop("disabled", false);
+                    }
+                }
+
+
+            }
+        });
+    }
+
+      function getDD_Bank(a,act) {
+         //$("#dd_Bank").prop("disabled", true);
+          var idata = {
+              sandiBank: a,
+              cakupan: $("#dd_CakupanDt").val(),
+              jnsKegiatan: $("#dd_JenisKegiatan").val()
+          }
+        $.ajax({
+            type: 'POST',
+            @*url: '@Url.Action("getDD_Bank", "LapStatusPenyampaian", null, Request.Url.Scheme)?IdPelapor='+a,*@
+            url: '@Url.Action("getIdPelaporan", "LapAbsensi", null, Request.Url.Scheme)',
+            data: idata,
+            dataType:'JSON',
+            success: function (e) {
+                reloadlogin(e);
+                //console.log(e);
+                var data = e.data;
+                var html = "";
+
+                //html = html + '<option value=""></option>';
+                for (var i = 0; i < data.length; i++) {
+                    html = html + '<option value="' + data[i].idpelapor + '">' + data[i].instansidesc + '</option>';
+                }
+                $("#dd_Bank").multipleSelect('destroy');
+                $("#dd_Bank").html(html).multipleSelect({
+                    filter: true
+                }).multipleSelect('disable');
+                //$("#dd_Bank").html(html);
+            },
+            complete: function (ee) {
+                var idt = '@ViewBag.IdPelapor';
+                if (idt != "" ) {
+                    $("#dd_Bank").multipleSelect('setSelects', idt.split(','));
+                    $("#dd_Bank").multipleSelect('enable');
+                } else {
+                    $("#dd_Bank").multipleSelect('setSelects', '');
+                    if (a != "") {
+                        $("#dd_Bank").multipleSelect('checkAll');
+                        $("#dd_Bank").multipleSelect('enable');
+                    }
+                }
+
+                @*var idPel = '@ViewBag.IdPelapor';
+                if (act == "1") {
+                    $("#dd_Bank").multipleSelect('setSelects', idPel.split(','));
+                } else {
+                    if (idPel != "" && act == "1") {
+                        $("#dd_Bank").multipleSelect('setSelects', idPel.split(','));
+                    } else {
+                        $("#dd_Bank").multipleSelect('setSelects', '');
+                        if (a != "") {
+                            $("#dd_Bank").multipleSelect('enable');
+                        }
+                    }
+                }*@
+            }
+        });
+    }
+
+
+     //$("#dd_Bank").on("change", function (e) {
+     //    setToExport();
+     //});
+     //$("#dd_Informasi").on("change", function (e) {
+     //    setToExport();
+     //});
+     //$("#txtHarian").on("change", function (e) {
+     //    setToExport();
+     //});
+     //$("#dd_MBulan").on("change", function (e) {
+     //    setToExport();
+     //});
+     //$("#dd_MTahun").on("change", function (e) {
+     //    setToExport();
+     //});
+     //$("#dd_BBulan").on("change", function (e) {
+     //    setToExport();
+     //});
+     //$("#dd_BTahun").on("change", function (e) {
+     //    setToExport();
+     //});
+     //$("#dd_Triwulan").on("change", function (e) {
+     //    setToExport();
+     //});
+     //$("#dd_TTahun").on("change", function (e) {
+     //    setToExport();
+     //});
+     //$("#dd_Semester").on("change", function (e) {
+     //    setToExport();
+     //});
+     //$("#dd_STahun").on("change", function (e) {
+     //    setToExport();
+     //});
+
+     @*function setToExport() {
+         document.getElementById("id-eksCSV").href = "@Url.Action("exportCSV", "LapRincianAbsensi", null,
+                                                        Request.Url.Scheme)?Cakupan="+$("#dd_CakupanDt").val()+
+                                                                            "&IdPelapor="+$("#dd_Bank").val().join()+
+                                                                            "&KelInformasi="+$("#dd_KelInformasi").val().join()+
+                                                                            "&idinformation="+$("#dd_Informasi").val().join()+
+                                                                            "&Periode="+$("#PeriodLap").val()+
+                                                                            "&Harian="+$("#txtHarian").val()+
+                                                                            "&Minggu="+$("#dd_MMinggu").val()+
+                                                                            "&MBulan="+$("#dd_MBulan").val()+
+                                                                            "&MTahun="+$("#dd_MTahun").val()+
+                                                                            "&BBulan="+$("#dd_BBulan").val()+
+                                                                            "&BTahun="+$("#dd_BTahun").val()+
+                                                                            "&Triwulan="+$("#dd_Triwulan").val()+
+                                                                            "&TTahun="+$("#dd_TTahun").val()+
+                                                                            "&Semester="+$("#dd_Semester").val()+
+                                                                            "&STahun="+$("#dd_STahun").val()+
+                                                                            "&Status=" + $("#StatusPLap").val()+
+                                                                            "&wilayahkerja=" + $("#wilayahkerja").val();
+     }*@
+</script>
+
+<script>
+     var tbl;
+     $("#fm_InputLSP").submit(function (e) {
+         e.preventDefault();
+         var dd_Bank = $("#dd_Bank").multipleSelect('getSelects');
+         //var dd_KelInformasi = $("#dd_KelInformasi").multipleSelect('getSelects');
+         var wilayahkerja = $("#wilayahkerja").multipleSelect('getSelects');
+         var StatusPLap = $("#StatusPLap").multipleSelect('getSelects');
+         if (Object.keys(dd_Bank).length == 0) {
+             $("#dd_Bank").multipleSelect('open');
+         //} else if (Object.keys(dd_KelInformasi).length == 0) {
+         //    $("#dd_KelInformasi").multipleSelect('open');
+         } else if (Object.keys(wilayahkerja).length == 0) {
+             $("#wilayahkerja").multipleSelect('open');
+         } else if (Object.keys(StatusPLap).length == 0) {
+             $("#StatusPLap").multipleSelect('open');
+         } else {
+             $("#txtpage").val("100");
+             loadGrid();
+         }
+     });
+
+    var htmlpg = "", ishow = "0", ito = "0", iof = "0";
+     function loadGrid() {
+         var flag, iitbl;
+         document.getElementById("div-dtTbl").style = "display:none";
+         var idata = {
+             Cakupan: $("#dd_CakupanDt").val(),
+             IdPelapor: $("#dd_Bank").val().join(),
+             KelInformasi: $("#dd_KelInformasi").val(),
+             //idinformation: $("#dd_Informasi").val().join(),
+             Periode: $("#PeriodLap").val(),
+             Harian: $("#txtHarian").val(),
+             Minggu: $("#dd_MMinggu").val(),
+             MBulan: $("#dd_MBulan").val(),
+             MTahun: $("#dd_MTahun").val(),
+             BBulan: $("#dd_BBulan").val(),
+             BTahun: $("#dd_BTahun").val(),
+             Triwulan: $("#dd_Triwulan").val(),
+             TTahun: $("#dd_TTahun").val(),
+             Semester: $("#dd_Semester").val(),
+             STahun: $("#dd_STahun").val(),
+             Status: $("#StatusPLap").val().join(),
+             wilayahkerja: $("#wilayahkerja").val().join(),
+             pdata_penyampaian: $("#dd_pd").val(),
+             page: $("#txtpage").val(),
+         }
+         $.ajax({
+             type: 'POST',
+             url: '@Url.Action("getList", "LapRincianAbsensi", null, Request.Url.Scheme)',
+             data: idata,
+             dataType: 'JSON',
+             beforeSend: function (a) {
+                 $("#id_Lihat").html("<span class='fas fa-spinner fa-spin'></span>").prop("disabled", true);
+             },
+             success: function (e) {
+                 reloadlogin(e);
+                var data = e.data;
+                flag = e.flag;
+                iitbl = e.tbl;
+                //console.log(e);
+                 $("#dt_tbl").html('<table id="' + e.tbl + '" class="tableexc table-responsive table-bordered table-striped table-sm" cellspacing="0" width="100%"></table>');
+                //$("#dt_tbl").html('<table id="' + e.tbl + '" class="table-condensed table-sm table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%"></table>');
+                 $("#" + e.tbl).html(data);
+
+
+                $("#cpdt").html('<table id="tblexp" class="tableexc d-none">' + data + '</table>');
+                 cpdata();
+
+                 if (e.flag) {
+                     htmlpg = e.ipage;
+                     ishow = e.show;
+                     ito = e.to;
+                     iof = e.of;
+                 }
+                //$("#dataTableRGV").html(data);
+            },
+            complete: function (b) {
+                $("#id_Lihat").html("<span class='fas fa-search'></span> Lihat").prop("disabled", false);
+                //var iheader = $('#' + iitbl).find('thead')[0].innerHTML;
+                //$("#" + iitbl).dataTable().fnDestroy();
+                var dtta = $("#" + iitbl).DataTable({
+                    dom: "Bfrti",
+                    buttons: [],
+                    //dom: 'Bfrtip',
+                    //buttons: [{
+                    //    extend: 'excelHtml5',
+                    //    customize: function (xlsx) {
+                    //        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                    //        // jQuery selector to add a border
+                    //        $('row c[r*="10"]', sheet).attr('s', '25');
+                    //    }
+                    //}]
+                    //"autoWidth": true,
+                    "ordering": false,
+                    "paging": false,
+                    //"scrollX": true,
+                    //"scrollY": true,
+                    //responsive: true
+                    ////fixedColumns: {
+                    ////    leftColumns: 3
+                    ////}
+
+
+                    //BEGIN COLOR
+                    "rowCallback": function (row, data, index) {
+                        var ix = this.fnSettings().aoColumns.length;
+                        for (var ixx = 2; ixx < ix - 1; ixx++) {
+                            if (ixx % 2 == 0) {
+                                if (data[ixx] == 'Z') {
+                                    $(row).find('td:eq(' + ixx.toString() + ')').html("");
+                                }
+
+                                if (data[ixx] != 'Z' && data[ixx].includes('-') == false) {
+                                    $(row).find('td:eq(' + ixx.toString() + ')').css('background-color', 'darkgrey');
+                                    $(row).find('td:eq(' + (ixx + 1).toString() + ')').css('background-color', 'darkgrey');
+                                }
+                            }
+
+                        }
+
+                    }
+                    //END COLOR
+                });
+                document.getElementById("div-dtTbl").style = "display:inline";
+                $('#' + iitbl).trigger('click');
+                var a = $(".dt-buttons").find(".Pdf");
+                if (a.length == 0) {
+                   //20210820 add filter information to download file
+
+                    var pddata;
+                    var jeniskeg;
+                    var statusclear = "";
+                    var statusarr1 = $("#StatusPLap").val();
+                    var statusarr = statusarr1.toString().split(",");
+                    var mingguan = $("#dd_MMinggu option:selected").text().split(" ");
+                    if (statusarr.length > 0) {
+                        for (var i = 0; i < statusarr.length; i++) {
+                            if (i != statusarr.length-1) {
+
+                                statusclear += statusarr[i].substring(2) + ", ";
+                            } else {
+
+                                statusclear += statusarr[i].substring(2) + "";
+                            }
+                        }
+                    } else {
+                        statusclear = statusarr;
+                    }
+                    if ($("#dd_JenisKegiatan").val() == "Pilih Semua") {
+                        jeniskeg = "BUK, BUS, UUS";
+                    } else {
+                        jeniskeg = $("#dd_JenisKegiatan").val();
+                    }
+                    switch ($("#PeriodLap").val()) {
+                        case "Harian":
+                            pddata = $("#txtHarian").val();
+                            break;
+                        case "Mingguan":
+                            pddata = mingguan[0] + " ke " + mingguan[1] +", " + $("#dd_MBulan option:selected").text() + " " + $("#dd_MTahun").val();
+                            break;
+                        case "Bulanan":
+                            pddata = $("#dd_BBulan option:selected").text() + " " + $("#dd_BTahun").val();
+                            break;
+                        case "Triwulan":
+                            pddata = $("#dd_Triwulan option:selected").text() + ", " + $("#dd_TTahun").val();
+                            break;
+                        case "Semesteran":
+                            pddata = $("#dd_Semester option:selected").text() + ", " + $("#dd_STahun").val();
+                            break;
+                        case "Tahunan":
+                            pddata = $("#dd_THTahun option:selected").text() + ", " + $("#dd_THTahun").val();
+                            break;
+                        default:
+                            pddata = "";
+                    }
+                    var param = "KelinfDec=" + btoa($("#dd_KelInformasi").val() //0 Kelompok Informasi
+                        + "|" + $("#StatusPLap").val() //1 Status
+                        + "|" + $("#dd_CakupanDt option:selected").text() //2 Cakupan
+                        + "|" + jeniskeg //3 Jenis Kegiatan
+                        + "|" + $("#PeriodLap").val() //4 Periode
+                        + "|" + $("#dd_pd option:selected").text() //5 PD
+                        + "|" + pddata //6 PD Date
+                        + "|" + statusclear); //7 Status Clear
+                    var url_Excel = '@Url.Action("ExportToExcel", "LapRincianAbsensi", null, Request.Url.Scheme)?' + param;
+                    var url_Csv = '@Url.Action("exportCSV", "LapRincianAbsensi", null, Request.Url.Scheme)?' + param;
+                    var url_PDF = '@Url.Action("ExportToPDF", "LapRincianAbsensi", null, Request.Url.Scheme)?' + param;
+                    $(".dt-buttons").append('<a href="' + url_Csv + '" class="pdf btn btn-default buttons-excel buttons-html5 btn-sm btn-info" target="_blank"><span>Csv</span></a>')
+                    $(".dt-buttons").append('<a href="' + url_Excel + '" class="pdf btn btn-default buttons-excel buttons-html5 btn-sm btn-success" target="_blank"><span>Excel</span></a>')
+                    $(".dt-buttons").append('<a href="' + url_PDF + '" class="pdf btn btn-default buttons-pdf buttons-html5 btn-sm btn-danger" target="_blank"><span>PDF</span></a>')
+                    $(".dt-buttons").append('<select onchange="setPage(this)" class="form-control input-sm" type="text" required id="dd_Page" name="dd_Page">' + htmlpg + '</select>')
+                    $(".dataTables_info").html('Showing ' + ishow + ' to ' + ito + ' of ' + iof + ' entries')
+                }
+
+                $("#dd_Page").val($("#txtpage").val());
+            }
+         });
+     }
+
+    function setPage(e) {
+        $("#txtpage").val(e.value);
+        loadGrid();
+    }
+
+     @*function loadGrid() {
+            $('#dataTableRGV').dataTable().fnDestroy();
+            tbl = $('#dataTableRGV')
+                .DataTable(
+                {
+                   columnDefs: [
+                       //{ "targets": [0], "visible": false, "searchable": false },
+                    ],
+                        ajax: {
+                            url: '@Url.Action("getList", "LapRincianGagalValidasi", null, Request.Url.Scheme)',
+                        type: 'POST',
+                        data: function (z) {
+                            z.Cakupan = $("#dd_CakupanDt").val();
+                            z.IdPelapor = $("#dd_Bank").val().join();
+                            z.KelInformasi = $("#dd_KelInformasi").val();
+                            z.idinformation = $("#dd_Informasi").val().join();
+                            z.Periode = $("#PeriodLap").val();
+                            z.Harian = $("#txtHarian").val();
+                            z.Minggu = $("#dd_MMinggu").val();
+                            z.MBulan = $("#dd_MBulan").val();
+                            z.MTahun = $("#dd_MTahun").val();
+                            z.BBulan = $("#dd_BBulan").val();
+                            z.BTahun = $("#dd_BTahun").val();
+                            z.Triwulan = $("#dd_Triwulan").val();
+                            z.TTahun = $("#dd_TTahun").val();
+                            z.Semester = $("#dd_Semester").val();
+                            z.STahun = $("#dd_STahun").val();
+                        },
+                        //success: function (e) {
+                        //    if (!e.flag) {
+                        //        $(".dataTables_empty").text(e.data);
+                        //    }
+                        //}
+                    },
+                    order: [[1, 'asc']],
+                    columns: [
+                        { data: 'bank' },
+                        { data: 'bank' },
+                        { data: 'bankDesc' },
+                        { data: 'informasi' },
+                        { data: 'pesan' },
+                    ]
+
+                });
+
+            tbl.on('order.dt search.dt', function () {
+                tbl.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+			 $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
+        console.log(message);
+    };
+            document.getElementById("div-dtTbl").style = "display:inline";
+     }*@
+
+</script>
+
+<script>
+    function showDetail (e) {
+    $("#mdlDetail").modal({
+        backdrop: "static",
+        keyboard: false
+    });
+
+    var pl = $("#PeriodLap").val();
+    $('#tbl_detailLRA').dataTable().fnDestroy();
+        $('#tbl_detailLRA').DataTable({
+            ajax: {
+                url: '@Url.Action("getListDtl", "LapRincianAbsensi", null, Request.Url.Scheme)',
+                type: 'POST',
+                data: function (z) {
+                    z.IdPelapor = $(e).data('idpelapor').split('-')[0].trim();
+                    z.Periode = (pl == "Harian") ? "D" : (pl == "Mingguan") ? "W" : (pl == "Bulanan") ? "M" : (pl == "Triwulan") ? "Q" : (pl === "Semesteran") ? "S" : (pl == "Tahunan") ? "A" : "";
+                    z.Status = $("#StatusPLap").val().join();
+                },
+            },
+            dom: "Bfrtip",
+            buttons: [
+                {
+                    extend: "csv",
+                    className: "btn-sm btn-info",
+                    fieldSeparator:";",
+                    exportOptions: {
+                        format: {
+                            header: function (data, columnIdx) {
+                                return (columnIdx > 6) ? 'Jumlah Baris ' + data : data;
+                            }
+                        }
+                    }
+                },
+                {
+                    extend: "excel",
+                    className: "btn-sm btn-success",
+                    exportOptions: {
+                        format: {
+                            header: function (data, columnIdx) {
+                                return (columnIdx > 6) ? 'Jumlah Baris ' + data : data;
+                            }
+                        }
+                    }
+                },
+                {
+                    extend: "pdfHtml5",
+                    className: "btn-sm btn-danger",
+                    exportOptions: {
+                        format: {
+                            header: function (data, columnIdx) {
+                                return (columnIdx > 6) ? 'Jumlah Baris ' + data : data;
+                            }
+                        }
+                    }
+                },
+            ],
+            order: [[1, 'asc']],
+            columns: [
+                { data: 'Bank' },
+                { data: 'kelompokinformasi' },
+                { data: 'namainformasi' },
+                { data: 'versioncode' },
+                { data: 'periodelaporan' },
+                { data: 'periodedata' },
+                { data: 'recordtimestamp' },
+                { data: 'JumlahBarisLaporan' },
+                { data: 'JumlahBarisKoreksi' }
+            ]
+        });
+
+    $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
+        console.log(message);
+    };
+}
+
+</script>
