@@ -1,0 +1,578 @@
+﻿@{
+    ViewBag.Title = "Indikasi Denda";
+    Layout = "~/Views/Shared/_LayoutMaster.cshtml";
+}
+@Styles.Render("~/bundles/customcss")
+<div class="modal" id="myModal">
+    <div class="modal-dialog modal-lg" style="max-width:948px">
+        <form id="formInputHld" novalidate>
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <input type="hidden" id="idDenda" name="idDenda" />
+                        <div class="form-group col-md-12 row">
+                            <label class="col-sm-3 control-label">Kelompok Informasi</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" id="ddl_KelInfor" name="ddl_KelInfor">
+                                    <option value="0">-- Pilih Data--</option>
+                                    @foreach (System.Data.DataRow row in ViewBag.kelompokInformasi.Rows)
+                                    {
+                                        <option value="@row["kelompokinformasi"]">
+                                            @row["kelompokinformasi"]
+                                        </option>
+                                    } 
+                                </select>
+                            </div>
+                            <label class="col-sm-2 control-label">Periode Pelaporan</label>
+                            <div class="col-sm-3">
+                                <select class="form-control" id="ddl_period" name="ddl_period" required>
+                                    <option value="0">-- Pilih Data--</option>
+                                    <option value="D">Harian</option>
+                                    <option value="W">Mingguan</option>
+                                    <option value="M">Bulanan</option>
+                                    <option value="Q">Triwulan</option>
+                                    <option value="S">Semesteran</option>
+                                    <option value="A">Tahunan</option>
+                                </select>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div id="mymodel1" class="form-horizontal">
+                    <table id="dataTable1" class="table-striped compact" cellpadding="2" cellspacing="0" width="100%" style="border: thin solid #bcbcbc;">
+                        <tr>
+                            <td width="59%"> <label class="col-sm-10 control-label">Indikasi Denda Keterlambatan Menyampaikan Laporan per Hari</label></td>
+                            <td width="1%">Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_lapperhari" name="Id_lapperhari" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td><label class="col-sm-10 control-label">Indikasi Denda Keterlambatan Menyampaikan Koreksi per Hari</label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_koreksiperhari" name="Id_koreksiperhari" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td> <label class="col-sm-10 control-label">Indikasi Denda Tidak Menyampaikan Laporan</label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_menyampaikanperhari" name="Id_menyampaikanperhari" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td> <label class="col-sm-10 control-label">Koreksi Inisiatif Sendiri per Baris</label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_inisiatifperhari" name="Id_inisiatifperhari" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td> <label class="col-sm-10 control-label">Koreksi Temuan Otoritas per Baris</label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_Otoritasperhari" name="Id_Otoritasperhari" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+
+                        <tr>
+                            <td> <label class="col-sm-10 control-label">Koreksi Audit KAP per Baris</label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_AuditKAPperhari" name="Id_AuditKAPperhari" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+
+                    </table><br />
+                </div>
+
+                <div id="mymodel2" class="form-horizontal" >
+                    <table id="dataTable2" class="table-striped" cellpadding="2" cellspacing="0" width="100%" style="border: thin solid #bcbcbc;">
+                        <tr>
+                            <td width="59%"> <label class="col-sm-10 control-label">Maksimum Koreksi Inisiatif Sendiri per Bank </label></td>
+                            <td width="1%">Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_sediriperhari" name="Id_lapperhari" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td><label class="col-sm-10 control-label">Maksimum Koreksi Temuan Otoritas per Bank </label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_tamuOtoperhari" name="Id_koreksiperhari" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+
+                        <tr>
+                            <td><label class="col-sm-10 control-label">Maksimum Koreksi Temuan Audit KAP per Bank </label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_Auditperhari" name="Id_KAPperhari" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+
+                    </table><br />
+                </div>
+                <div id="mymodel3" class="form-horizontal" >
+                    <table id="dataTable3" class="table-striped" cellpadding="2" cellspacing="0" width="100%" style="border: thin solid #bcbcbc;">
+                        <tr>
+                            <td colspan="3"><label class="col-sm-10 control-label"><h6>Maksimum Koreksi Inisiatif Sendiri</h6></label></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"><label class="col-sm-10 control-label"><h6>per Bank</h6></label></td>
+                        </tr>
+                        <tr>
+                            <td width="59%"> <label class="col-sm-10 control-label" style="padding-left:50px">KC <= 30</label></td>
+                            <td width="1%">Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_kc301" name="Id_kc301" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td><label class="col-sm-10 control-label" style="padding-left:50px">KC 31-100 Kantor </label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_kc30kantor1" name="Id_kc30kantor1" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td><label class="col-sm-10 control-label" style="padding-left:50px">KC > 100 Kantor </label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_kc100kantor1" name="Id_kc100kantor1" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td><label class="col-sm-10 control-label">per KC</label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_kcmaxkantor1" name="Id_kc100kantor2" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"><label class="col-sm-10 control-label"><h6>Maksimum Koreksi Temuan Otoritas</h6></label></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"><label class="col-sm-10 control-label"><h6>per Bank</h6></label></td>
+                        </tr>
+                        <tr>
+                            <td width="59%"> <label class="col-sm-10 control-label" style="padding-left:50px">KC <= 30 </label></td>
+                            <td width="1%">Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_kc302" name="Id_kc302" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td><label class="col-sm-10 control-label" style="padding-left:50px">KC 31-100 Kantor </label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_kc30kantor2" name="Id_kc30kantor2" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td><label class="col-sm-10 control-label" style="padding-left:50px">KC > 100 Kantor </label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_kc100kantor2" name="Id_kc100kantor2" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td><label class="col-sm-10 control-label">per KC</label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_kcmaxkantor2" name="Id_kc100kantor2" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3"><label class="col-sm-10 control-label"><h6>Maksimum Koreksi Temuan Audit KAP</h6></label></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"><label class="col-sm-10 control-label"><h6>per Bank</h6></label></td>
+                        </tr>
+                        <tr>
+                            <td width="59%"> <label class="col-sm-10 control-label" style="padding-left:50px">KC <= 30 </label></td>
+                            <td width="1%">Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_kc303" name="Id_kc303" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td><label class="col-sm-10 control-label" style="padding-left:50px">KC 31-100 Kantor </label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_kc30kantor3" name="Id_kc30kantor3" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td><label class="col-sm-10 control-label" style="padding-left:50px">KC > 100 Kantor </label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_kc100kantor3" name="Id_kc100kantor3" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td><label class="col-sm-10 control-label">per KC</label></td>
+                            <td>Rp.</td>
+                            <td class="col-sm-8"><input type="text" class="form-control" id="Id_kcmaxkantor3" name="Id_kcmaxkantor3" onkeypress="return isNumberKey(event)" onkeyup="this.value=formatCurrency(this.value)" value="0"></td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" id="btnClose" data-dismiss="modal">Tutup</button>
+                    @{
+                        var xs = true;
+                        foreach (var item in ViewBag.ButtonAcc)
+                        {
+                            if (item.MenuDesc == "Button New" || item.MenuDesc == "Button Update")
+                            {
+                                if (xs)
+                                {
+                                    <button type="submit" id="id-submitForm" class="btn btn-primary">Simpan</button>
+                                }
+                                xs = false;
+
+                            }
+                        }
+
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                <h4 class="c-grey-900 mB-20">Pengaturan Indikasi Denda</h4>
+                <button id="btnAdd" class="btn btn-sm btn-primary">Tambah Baru</button>
+                <br />
+                <br />
+                <table id="dataTableDenda" class="table table-condensed  table-sm table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th width="5%">No</th>
+                            <th width="25%">Kelompok Informasi</th>
+                            <th width="15%">Periode Pelaporan</th>
+                            <th width="10%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 45)
+            return false;
+        return true;
+    }
+
+    function formatCurrency(num) {
+        num = String(num).replace(/\$|\,/g, '');
+        if (isNaN(num))
+            num = "0";
+        sign = (num == (num = Math.abs(num)));
+        num = Math.floor(num * 100 + 0.50000000001);
+        num = Math.floor(num / 100).toString();
+        for (var i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++)
+            num = num.substring(0, num.length - (4 * i + 3)) + ',' + num.substring(num.length - (4 * i + 3));
+        return (((sign) ? '' : '-') + num);
+    }
+
+</script>
+<script>
+   
+    $(document).ready(function () {
+      
+        $("#ddl_period").on("change", function () {
+            
+            var ikelInfo = $("#ddl_KelInfor").val();
+            var iperiode = $("#ddl_period").val();
+            
+            if (ikelInfo == "Kelompok Informasi Keuangan" && iperiode == "M") {
+                $("#mymodel3").show();
+                $("#mymodel2").hide();
+            } else if (ikelInfo == "0" || iperiode == "0" ) {
+                $("#mymodel2").hide();
+                $("#mymodel3").hide();
+            } else {
+                $("#mymodel3").hide();
+                $("#mymodel2").show();
+            }
+           
+        });
+
+        $("#ddl_KelInfor").on("change", function () {
+
+            var ikelInfo = $("#ddl_KelInfor").val();
+            var iperiode = $("#ddl_period").val();
+            if (ikelInfo == "Kelompok Informasi Keuangan" && iperiode == "M") {
+                $("#mymodel3").show();
+                $("#mymodel2").hide();
+              
+            } else if (ikelInfo == "0" || iperiode == "0") {
+
+                $("#mymodel2").hide();
+                $("#mymodel3").hide();
+            } else {
+                $("#mymodel3").hide();
+                $("#mymodel2").show();
+            }
+
+        });
+
+        $("#dataTableDenda").on("click", "button.view", function () {
+            $("#dd_location").removeAttr('multiple');
+            $("#formInputHld")[0].reset();
+
+            getdataIndikasiDenda(this.id);
+        });
+
+       
+        $("#btnAdd").on("click", function () {
+            $("#ddl_KelInfor").attr("disabled", false); 
+            $("#ddl_KelInfor").attr("title", "");
+            $("#ddl_period").attr("disabled", false); 
+            $("#mymodel2").hide();
+            $("#mymodel3").hide();
+            $("#idDenda").val(0);
+            $("#formInputHld")[0].reset();
+
+            $(".modal-title").text("Tambah Indikasi Denda");
+            $("#myModal").modal({
+                backdrop: "static",
+                keyboard: false
+            });
+        })
+
+        $("#formInputHld").submit(function (e) {
+
+            senddt(this);
+            e.preventDefault();
+        });
+
+       
+        //console.log();
+    });
+
+     function getdataIndikasiDenda(id) {
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("/", "IndikasiDenda", null, Request.Url.Scheme)getListId/'+id  ,
+            dataType:'JSON',
+            success: function (data) {
+                console.log(data);
+                setEditValue(data.data[0]);
+            },
+            complete: function () {
+                $(".modal-title").text("Ubah Indikasi Denda");
+                $("#myModal").modal({
+                    backdrop: "static",
+                    keyboard: false
+                });
+            }
+        });
+    }
+    function setEditValue(data) {
+        document.getElementById("idDenda").value = data.DendaId;
+        $("#idDenda").val(data.DendaId);
+        $("#ddl_KelInfor").val(data.KelompokInformasi);
+        $("#ddl_KelInfor").attr("disabled", "disabled"); 
+        $("#ddl_KelInfor").attr("title", $("#ddl_KelInfor").val()); 
+        $("#ddl_period").val(data.TipePeriodeLaporan);
+        $("#ddl_period").attr("disabled", "disabled"); 
+        $("#Id_lapperhari").val(formatCurrency(data.TerlambatMenyampaikanLaporanPerHari));
+
+        $("#Id_koreksiperhari").val(formatCurrency(data.TerlambatMenyampaikanKoreksiPerHari));
+        $("#Id_menyampaikanperhari").val(formatCurrency(data.TidakMenyampaikanLaporan));
+        $("#Id_inisiatifperhari").val(formatCurrency(data.KoreksiInisiatifSendiriPerBaris));
+        $("#Id_Otoritasperhari").val(formatCurrency(data.KoreksiTemuanOtoritasPerBaris));
+        $("#Id_AuditKAPperhari").val(formatCurrency(data.KoreksiAuditKAPPerBaris));
+       
+        var a = data.KelompokInformasi;
+        var b = data.TipePeriodeLaporan;
+        if (a == "Kelompok Informasi Keuangan" && b == "M") {
+            $("#mymodel2").hide();
+            $("#mymodel3").show();
+            $("#Id_kc301").val(formatCurrency(data.KC30InitiatifSendiri));
+            $("#Id_kc30kantor1").val(formatCurrency(data.KC30100InitiatifSendiri));
+            $("#Id_kc100kantor1").val(formatCurrency(data.KC100InitiatifSendiri));
+            $("#Id_kcmaxkantor1").val(formatCurrency(data.KCmaxInisiatifSendiri));
+            $("#Id_kc302").val(formatCurrency(data.KC30TemuanOtoritas));
+            $("#Id_kc30kantor2").val(formatCurrency(data.KC30100TemuanOtoritas));
+            $("#Id_kc100kantor2").val(formatCurrency(data.KC100TemuanOtoritas));
+            $("#Id_kcmaxkantor2").val(formatCurrency(data.KCmaxTemuanOtoritas));
+
+            $("#Id_kc303").val(formatCurrency(data.KC30AuditKAP));
+            $("#Id_kc30kantor3").val(formatCurrency(data.KC30100AuditKAP));
+            $("#Id_kc100kantor3").val(formatCurrency(data.KC100AuditKAP));
+            $("#Id_kcmaxkantor3").val(formatCurrency(data.KCmaxAuditKAP));
+
+        } else {
+            $("#mymodel2").show();
+            $("#mymodel3").hide();
+            $("#Id_sediriperhari").val(formatCurrency(data.MaxKoreksiInisiatifSendiriPerBank));
+            $("#Id_tamuOtoperhari").val(formatCurrency(data.MaxKoreksiTemuanOtoritasPerBank));
+            $("#Id_Auditperhari").val(formatCurrency(data.MaxKoreksiAuditKAPPerBank));
+            
+        }
+
+    }
+
+
+     function senddt(a) {
+       
+        var mdata = {}
+        
+         mdata["IdDenda"] = document.getElementById("idDenda").value;
+         mdata["ddl_KelInfor"] = $("#ddl_KelInfor").val();
+         mdata["ddl_period"] = $("#ddl_period").val();
+         mdata["Id_lapperhari"] = $("#Id_lapperhari").val();
+         mdata["Id_koreksiperhari"] = $("#Id_koreksiperhari").val();
+         mdata["Id_menyampaikanperhari"] = $("#Id_menyampaikanperhari").val();
+         mdata["Id_inisiatifperhari"] = $("#Id_inisiatifperhari").val();
+         mdata["Id_Otoritasperhari"] = $("#Id_Otoritasperhari").val();
+         mdata["Id_AuditKAPperhari"] = $("#Id_AuditKAPperhari").val();
+ 
+         var a = $("#ddl_KelInfor").val();
+         var b = $("#ddl_period").val();
+         if (a == "Kelompok Informasi Keuangan" && b == "M") {
+             mdata["Id_kc301"] = $("#Id_kc301").val();
+             mdata["Id_kc30kantor1"] = $("#Id_kc30kantor1").val();
+             mdata["Id_kc100kantor1"] = $("#Id_kc100kantor1").val();
+             mdata["Id_kcmaxkantor1"] = $("#Id_kcmaxkantor1").val();
+             mdata["Id_kc302"] = $("#Id_kc302").val();
+             mdata["Id_kc30kantor2"] = $("#Id_kc30kantor2").val();
+             mdata["Id_kc100kantor2"] = $("#Id_kc100kantor2").val();
+             mdata["Id_kcmaxkantor2"] = $("#Id_kcmaxkantor2").val();
+
+             mdata["Id_kc303"] = $("#Id_kc303").val();
+             mdata["Id_kc30kantor3"] = $("#Id_kc30kantor3").val();
+             mdata["Id_kc100kantor3"] = $("#Id_kc100kantor3").val();
+             mdata["Id_kcmaxkantor3"] = $("#Id_kcmaxkantor3").val();
+
+
+
+             mdata["Id_sediriperhari"] = "0";
+             mdata["Id_tamuOtoperhari"] = "0";
+         } else {
+             mdata["Id_kc301"] = "0";
+             mdata["Id_kc30kantor1"] = "0";
+             mdata["Id_kc100kantor1"] = "0";
+             mdata["Id_kcmaxkantor1"] = "0";
+             mdata["Id_kc302"] = "0";
+             mdata["Id_kc30kantor2"] = "0";
+             mdata["Id_kc100kantor2"] = "0";
+             mdata["Id_kcmaxkantor2"] = "0";
+
+             mdata["Id_kc303"] = "0";
+             mdata["Id_kc30kantor3"] = "0";
+             mdata["Id_kc100kantor3"] = "0";
+             mdata["Id_kcmaxkantor3"] = "0";
+
+
+             mdata["Id_sediriperhari"] = $("#Id_sediriperhari").val();
+             mdata["Id_tamuOtoperhari"] = $("#Id_tamuOtoperhari").val();
+             mdata["Id_Auditperhari"] = $("#Id_Auditperhari").val();
+         }
+        
+       
+        
+        console.log(mdata);
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("senddt", "IndikasiDenda", null, Request.Url.Scheme)',
+            data: mdata,
+            dataType:"json",
+            beforeSend: function (a) {
+                $("#submitForm").prop("disabled", true);
+            },
+            success: function (a) {
+                reloadlogin(a);
+                $("#submitForm").prop("disabled", false);
+                console.log(a);
+                if (a.success) {
+
+                    $.confirm({
+                        title: "Berhasil",
+                        content: a.message,
+                        type: "green",
+                        typeAnimated: true,
+                        buttons: {
+                            tryAgain: {
+                                text: 'OK',
+                                btnClass: 'btn-success',
+                                action: function () {
+                                    $("#dataTableDenda").DataTable().ajax.reload()
+                                    $("#myModal").modal("hide");
+                                }
+                             }
+                         }
+                    });
+                } else {
+                    $.confirm({
+                        title: "Gagal",
+                        content: a.message,
+                        type: "red",
+                        typeAnimated: true,
+                        buttons: {
+                            tryAgain: {
+                                text: 'OK',
+                                btnClass: 'btn-danger',
+                                action: function () {
+                                    //$("#dataTableRole").DataTable().ajax.reload()
+                                }
+                            }
+                        }
+                    });
+                }
+            },
+            complete: function (a) {
+                //$("#myModal").modal("hide");
+            }
+        });
+
+        return false;
+    }
+
+</script>
+<script>
+    //$("#dataTableTM").DataTable();
+    var tbl = $('#dataTableDenda')
+        .DataTable(
+        {
+            dom: 'lBfrtip',
+            buttons: [{
+                extend: 'excel',
+                className: 'btn-sm btn-success  ml-3',
+                text: 'Excel',
+                exportOptions: {
+                    columns: [0, 1, 2]
+                }
+            }],
+            ajax: {
+                url: '@Url.Action("getList", "IndikasiDenda", null, Request.Url.Scheme)',
+                    type: 'GET'
+                },
+                order: [[0, 'asc']],
+                columns: [
+                {
+
+                    //data: 'PeriodId'
+                    render: function (data, type, full, meta) {
+                        return meta.row + 1;
+                    }
+                },
+                {
+
+                    data: 'KelompokInformasi'
+                },
+                {
+
+                    data: 'TipePeriodeLaporan'
+                },
+               
+              
+                    {
+                        render: function (data,
+                            type, row) {
+                            var edit = "";
+                            var arrDT = JSON.parse('@Html.Raw(Json.Encode(@ViewBag.ButtonAcc))');
+                            for (var i = 0; i < arrDT.length; i++) {
+                                if (arrDT[i].MenuDesc == "Button Update") {
+                                    edit += '<button class="view btn btn-sm btn-primary" id="' + row.DendaId + '" value="' + row.DendaId + '" ><i class=" fa fa-edit"></i></button>';
+                                }
+                              
+                            }
+                            return edit;
+                        },
+                        orderable: false
+                    }]
+
+        });
+
+    //tbl.on('order.dt search.dt', function () {
+    //    tbl.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+    //        cell.innerHTML = i + 1;
+    //    });
+    //}).draw();
+    $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
+        console.log(message);
+    };
+</script>
+
