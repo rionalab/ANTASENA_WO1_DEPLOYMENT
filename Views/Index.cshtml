@@ -1,0 +1,1051 @@
+﻿
+
+@{
+    ViewBag.Title = "Kewajiban Pelaporan";
+    Layout = "~/Views/Shared/_LayoutMaster.cshtml";
+}
+
+
+<div class="modal" id="myModal">
+    <div class="modal-dialog modal-lg">
+        <form id="formInputIP">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+
+                    <div class="form-horizontal">
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 control-label text-right">Bank<span style="color:red"> *</span></label>
+                            <div class="col-sm-8">
+                                <select class="form-control" type="text" required id="dd_bank" name="dd_bank"></select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 control-label text-right">Jenis Kegiatan<span style="color:red"> *</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" required id="dd_jeniskeg" class="form-control" name="dd_jeniskeg" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 control-label text-right">Status Kantor<span style="color:red"> *</span></label>
+                            <div class="col-sm-8">
+                                <select class="form-control" type="text" required id="dd_status" name="dd_status"></select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 control-label text-right">Id Pelapor<span style="color:red"> *</span></label>
+                            <div class="col-sm-8">
+                                <select style="width:92%" class="" type="text" id="dd_idpelapor" name="dd_idpelapor" multiple="multiple" placeholder="-- Pilih Idpelapor --"></select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 control-label text-right">Periode<span style="color:red"> *</span></label>
+                            <div class="col-sm-8">
+                                <select class="form-control input-sm" type="text" required id="dd_periode" name="dd_periode">
+                                    <option value="">-- Pilih Data --</option>
+                                    <option value="D">Harian</option>
+                                    <option value="W">Mingguan</option>
+                                    <option value="M">Bulanan</option>
+                                    <option value="Q">Triwulanan</option>
+                                    <option value="S">Semesteran</option>
+                                    <option value="A">Tahunan</option>
+                                </select>
+                                <div id="msgkp"></div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 control-label text-right">Informasi<span style="color:red"> *</span></label>
+                            <div class="col-sm-8">
+                                <select style="width:92%" class="" type="text" id="dd_informasi" name="dd_informasi" multiple="multiple" placeholder="-- Pilih Informasi --" disabled></select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button class="btn btn-default" id="btnClose" data-dismiss="modal">Tutup</button>
+@*tambah ini untuk trustee button*@
+                    @{
+                        var tf = true;
+                        foreach (var item in ViewBag.ButtonAcc)
+                        {
+                            if (item.MenuDesc == "Button New" || item.MenuDesc == "Button Update")
+                            {
+                                if (tf) { 
+                                <button type="submit" id="id-btnsimpan" class="btn btn-primary">Simpan</button>
+                                }
+                                tf = false;
+                            }
+                        }
+                    }
+@*tambah ini untuk trustee button*@
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal" id="myModalConfirm">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-top-color:red;border-top-width: 4px;border-top-style: solid;">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Konfirmasi !</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <p>Apakah anda yakin ingin menghapus bank <b id="delBank"></b> ?</p>
+                    <div class="row">
+                        <div class="col-md-4 dtl-mdl"><b>Pilih Periode<span style="color:red"> *</span></b></div>
+                        <div class="col-md-8 dtl-mdl">
+                            <input type="hidden" id="idpelaporDel"/>
+                            <select style="width:92%" class="" type="text" id="dd_periodeLap" multiple="multiple" placeholder="-- Pilih Periode --">
+                                <option value="D">Harian</option>
+                                <option value="W">Mingguan</option>
+                                <option value="M">Bulanan</option>
+                                <option value="Q">Triwulan</option>
+                                <option value="S">Semesteran</option>
+                                <option value="A">Tahunan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button class="btn btn-default" id="btnClose" data-dismiss="modal">Tutup</button>
+                <button id="id-btnsimpan" class="btn btn-danger" onclick="dltx()">Hapus</button>
+                   
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                <h4 class="c-grey-900 mB-20">@ViewBag.Title</h4>
+                @{
+                    foreach (var item in ViewBag.ButtonAcc)
+                    {
+                        if (item.MenuDesc == "Button New")
+                        {
+                            <button id="btnAdd" class="btn btn-sm btn-primary">Atur</button>
+                        }
+                    }
+                }
+                <br />
+                <br />
+                <div id="div-dtTbl">
+                    <table id="dataTableIP" class="table table-condensed  table-sm table-striped table-bordered" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th width="10%">Bank</th>
+                                <th>Jenis Kegiatan</th>
+                                <th>Status Kantor</th>
+                                <th width="30%">Harian</th>
+                                <th width="20%">Mingguan</th>
+                                <th width="20%">Bulanan</th>
+                                <th width="20%">Triwulan</th>
+                                <th width="20%">Semesteran</th>
+                                <th width="20%">Tahunan</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var pNamaBank = "";
+    $(document).ready(function () {
+
+        $('#dd_informasi').multipleSelect({
+            placeholder: "-- Pilih Informasi --",
+            multiple: true,
+            hideOptgroupCheckboxes: true,
+            multipleWidth: 60
+        })
+
+        $("#dd_status").select2({
+            placeholder: "-- Pilih Status Kantor --",
+            allowClear: true,
+            width: '100%'
+        });
+        $("#dd_idpelapor").multipleSelect().multipleSelect('disable');
+        $("#dd_periodeLap").multipleSelect();
+
+        $("#dd_periode").select2({
+            placeholder: "-- Pilih Data --",
+            allowClear: true,
+            width: '100%'
+        });
+
+        ////$("#dd_status").prop("disabled", true);
+        ////$("#dd_bank").val("").trigger("change");
+        $("#dd_bank").select2({
+            placeholder: "-- Pilih Bank --",
+            allowClear: true,
+            width: '100%'
+        });
+        $("#dd_status").prop("disabled", true);
+        $("#dataTableIP").on("click", "button.view", function () {
+            ifg = "senddt";
+            $("#formInputIP")[0].reset();
+            var idpelapor = this.id.split('-')[0];
+            var nama = this.id.split('-')[1];
+            var jnskeg = this.value.split(',')[0];
+            var stat = this.value.split(',')[1];
+            pNamaBank = this.id;//idpelapor.trim();
+            //$("#dd_Instansi").prop("disabled", true);
+            //getDD_Instansi(this.id, this.value.split(','));
+            //getdt_edit(idpelapor, nama, jnskeg, stat);
+            pop_edit(idpelapor.trim(), nama, jnskeg, stat);
+        });
+
+
+
+        $("#dataTableIP").on("click", "button.delete", function () {
+            $("#idpelaporDel").val(this.id);
+            $("#dd_periodeLap").multipleSelect('checkAll');
+
+            $("#delBank").text(this.value);
+            $("#myModalConfirm").modal({
+                backdrop: false,
+            });
+           
+        })
+
+        $("#id-btnsimpan").click(function () {
+           //if ($("#UserName").val() != "") {
+            //if (!isValidateFormatEmail()) {
+            if ($("#dd_bank").val() == "" || $("#dd_bank").val() == null || $("#dd_jeniskeg").val() == "" || $("#dd_status").val() == "" || $("#dd_periode").val() == "") {
+                $.confirm({
+                    title: 'Konfirmasi !',
+                    content: 'Mohon periksa kembali kelengkapan data.',
+                    type: 'red',
+                    typeAnimated: true,
+                    buttons: {
+
+                        //tutup: function () {
+                        //},
+                        tryAgain: {
+                            text: 'Tutup',
+                            btnClass: 'btn-red',
+                            action: function () {
+                             
+                            }
+                        }
+                    }
+                });
+                    }
+                //}
+           //}
+        });
+
+
+        $("#formInputIP").submit(function (e) {
+            e.preventDefault();
+            var dd_idpelapor = $("#dd_idpelapor").multipleSelect('getSelects');
+            var dd_informasi = $("#dd_informasi").multipleSelect('getSelects');
+            if (Object.keys(dd_idpelapor).length == 0) {
+                $("#dd_idpelapor").multipleSelect('open');
+            } else if (Object.keys(dd_informasi).length == 0) {
+                $("#dd_informasi").multipleSelect('open');
+            } else {
+                senddt();
+            }
+        });
+
+    });
+
+    $("#btnAdd").on("click", function () {
+        ifg = "Atur";
+        pNamaBank = "";
+        $("#formInputIP")[0].reset();
+        get_bank();
+        $("#dd_status").prop("disabled", true);
+        $("#dd_jeniskeg").prop("disabled", true);
+        //$("#dd_idpelapor").multipleSelect('disabled');
+        $(".modal-title").text("Atur Kewajiban Pelaporan");
+        $("#myModal").modal({
+            backdrop: "static",
+        });
+        $("#dd_bank").prop("disabled", false);
+        //$("#id-btnsimpan").prop("disabled", false);
+        //$("#dd_jeniskeg").prop("disabled", true);
+        //$("#dd_status").prop("disabled", true);
+
+        //("#dd_informasi").multipleSelect().multipleSelect('disable');
+        $("#dd_jeniskeg").val('');
+        $("#dd_status").select2('val', '');
+        $("#dd_status").select2("destroy").select2();
+        $("#dd_idpelapor").multipleSelect('disable');
+        $("#dd_idpelapor").multipleSelect('setSelects', "");
+        $("#dd_periode").select2('val', '');
+        $("#dd_informasi").multipleSelect('disable');
+        $("#dd_informasi").multipleSelect('setSelects', '');
+        $("#dd_periode").prop("disabled", true);
+        //$("#dd_jeniskeg").select2('val', '');
+        //$("#dd_status").select2('val', '');
+        //$("#dd_bank").val("").trigger("change");
+  
+
+    })
+
+    $("#dd_bank").on("change", function (e) {
+        //$("#dd_jeniskeg").prop("disabled", true);
+        $("#dd_jeniskeg").val(this.value.split(',')[1]);
+        var x = String($(this).val()).split(',');
+        //console.log("ini", x)
+        if (x.length >1) {
+            var cek = "new";
+            get_status(this.value.split(',')[0], this.value.split(',')[1], cek);
+            //$("#dd_periode").prop("disabled", false);
+        } else {
+            $("#dd_status").prop("disabled", true);
+        }
+
+    });
+
+
+    $("#dd_periode").on("change", function (e) {
+        //$("#dd_periode").val(this.value);
+        //console.log("iki",$("#dd_bank").val());
+        var xy = String($(this).val());
+        //console.log(xy);
+        //if ($("#dd_bank").val() == "" || $("#dd_bank").val() == null) {
+        //    //get_periode("","");
+        //    $("#dd_periode").select2('val', '');
+        //}
+        //else {
+        //    get_periode($("#dd_periode").val(), $("#dd_bank").val().split(',')[0]);
+        //    $("#dd_informasi").prop("disabled", false); 
+        //}
+
+        if (xy == "" || xy == null || xy == "undefined") {
+            $("#dd_periode").val("");
+            //$("#dd_informasi").multiSelect("disabled", true);
+            //$("#dd_informasi").multipleSelect().multipleSelect('disable');
+    
+        }
+        else {
+            get_periode($("#dd_periode").val(), $("#dd_bank").val().split(',')[0], $("#dd_status").val(), $("#dd_jeniskeg").val());
+            //$("#dd_informasi").multipleSelect().multipleSelect('enable');
+
+        }
+  
+    });
+
+    $("#dd_status").on("change", function (e) {
+        $("#dd_periode").prop("disabled", false);
+        var xy = String($("#dd_periode").val());
+        if (xy == "" || xy == null || xy == "undefined") {
+            $("#dd_periode").val("");
+        }
+        else {
+            get_periode($("#dd_periode").val(), $("#dd_bank").val().split(',')[0], $("#dd_status").val(), $("#dd_jeniskeg").val());
+        }
+        if ($(this).val() != null) {
+            get_idpelapor();
+        } 
+
+    });
+
+    function pop_edit(idpelapor, nama, jnskeg, stat) {
+        $("#formInputIP")[0].reset();
+        get_bank_edit(idpelapor);
+        get_status_edit(idpelapor, jnskeg,nama);
+        $("#id-btnsimpan").prop("disabled", false);
+        //$("#dd_bank").select2('val', idpelapor);
+        $("#dd_jeniskeg").val(jnskeg);
+        $("#dd_periode").select2('val', '');
+        $("#dd_periode").prop("disabled", false);
+        $("#dd_informasi").multipleSelect('disable');
+        $("#dd_informasi").multipleSelect('setSelects', '');
+        //$("#dd_periode").select2('val', '');
+        //$("#dd_status").select2('val', stat);
+       //$("#dd_Informasi").multipleSelect('setSelects', "");
+        $(".modal-title").text("Ubah Kewajiban Pelapor");
+        $("#myModal").modal({
+            backdrop: "static",
+            keyboard: false
+        });
+    }
+
+    var ifg;
+    function senddt() {
+        var idata;
+        idata = {
+            IdPelapor: (ifg == "Atur") ? $("#dd_idpelapor").val().join(',') : $("#dd_idpelapor").val(),
+            PeriodInformation: $("#dd_informasi").val().join('|'),
+            Periode: $("#dd_periode").val(),
+            fg: ifg
+        };
+         //console.log(idata);
+        //console.log(ifg);
+        $.ajax({
+            url: '@Url.Action("senddt", "InformasiPelapor", null, Request.Url.Scheme)',
+            type: 'POST',
+            data: idata,
+            dataType:"json",
+            beforeSend: function (a) {
+                $("#id-btnsimpan").prop("disabled", true);
+            },
+            success: function (a) {
+                reloadlogin(a);
+                if (a.success) {
+                    $('#dataTableIP').DataTable().ajax.reload();
+                    $.confirm({
+                        title: "Berhasil",
+                        content: a.message,
+                        type: "green",
+                        typeAnimated: true,
+                        buttons: {
+                            tryAgain: {
+                                text: 'OK',
+                                btnClass: 'btn-success',
+                                action: function () {
+                                    //$('#dataTableIP').DataTable().ajax.reload();
+                                }
+                             }
+                         }
+                    });
+                } else {
+                    $.confirm({
+                        title: "Gagal",
+                        content: "Gagal, " + a.message,
+                        type: "red",
+                        typeAnimated: true,
+                        buttons: {
+                            tryAgain: {
+                                text: 'OK',
+                                btnClass: 'btn-danger',
+                                action: function () {
+                                }
+                            }
+                        }
+                    });
+                }
+
+            },
+            complete: function (a) {
+                $("#myModal").modal("hide");
+                $("#id-btnsimpan").prop("disabled", false);
+            }
+        });
+
+        return false;
+    }
+
+     function dltx() {
+         var mdata = { IdPelapor: $("#idpelaporDel").val(), PeriodeLaporan: $("#dd_periodeLap").val().join(',') }
+         //console.log(mdata)
+         $.ajax({
+            type: 'POST',
+            url: '@Url.Action("deldt", "InformasiPelapor", null, Request.Url.Scheme)',
+            data: mdata,
+            dataType: "json",
+            beforeSend: function (a) {
+                $(".delete").prop("disabled", true);
+                $("#myModalConfirm").modal("hide");
+            },
+            success: function (a) {
+                reloadlogin(a);
+                 $(".delete").prop("disabled", false);
+                 //console.log(a);
+                if (a.success) {
+                    $('#dataTableIP').DataTable().ajax.reload();
+                    $.confirm({
+                        title: "Berhasil",
+                        content: a.message,
+                        type: "green",
+                        typeAnimated: true,
+                        buttons: {
+                            tryAgain: {
+                                text: 'OK',
+                                btnClass: 'btn-success',
+                                action: function () {
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    $.alert({
+                        title: 'Peringatan',
+                        icon: 'fas fa-warning',
+                        type: 'red',
+                        content: a.message
+                    });
+                }
+
+            },
+            complete: function (a) {
+            }
+        });
+    }
+
+    @*function getdt_edit(idpelapor,nama,jnskeg,stat) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("getedit_data", "InformasiPelapor", null, Request.Url.Scheme)?idpelapor=' + idpelapor,
+            dataType:'JSON',
+            success: function (e) {
+                reloadlogin(e);
+                //console.log(e);
+                var data = e.data;
+                var html = "";
+              
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].checkbox != 1) {
+                        if (i > 0) {
+                            if (data[i].kelompokinformasi == data[i - 1].kelompokinformasi) {
+                                html = html + '<option value="' + data[i].test + '">' + data[i].namainformasi + '</option>';
+                                if (i == data.length - 1) { html = html + '</optgroup>'; }
+                            }
+                            else {
+                                html = html + '</optgroup>';
+                                html = html + '<optgroup label="' + data[i].kelompokinformasi + '">';
+                            }
+                        } else {
+                            html = html + '<optgroup label="' + data[i].kelompokinformasi + '">';
+                            html = html + '<option value="' + data[i].IdInformation + '">' + data[i].namainformasi + '</option>';
+                        }
+                    }
+                    else {
+                        if (i > 0) {
+                            if (data[i].kelompokinformasi == data[i - 1].kelompokinformasi) {
+                                html = html + '<option value="' + data[i].test + '" selected>' + data[i].namainformasi + '</option>';
+                                if (i == data.length - 1) { html = html + '</optgroup>'; }
+                            }
+                            else {
+                                html = html + '</optgroup>';
+                                html = html + '<optgroup label="' + data[i].kelompokinformasi + '">';
+                            }
+                        } else {
+                            html = html + '<optgroup label="' + data[i].kelompokinformasi + '">';
+                            html = html + '<option value="' + data[i].IdInformation + '" selected>' + data[i].namainformasi + '</option>';
+                        }
+                    }
+
+
+                }
+
+                $("#dd_informasi").multipleSelect('destroy');
+                $("#dd_informasi").html(html).multipleSelect({
+                    filter: true
+                }).multipleSelect('enable');
+
+           
+
+
+                //html = '<option value></option>';
+                //for (var i = 0; i < data.length; i++) {
+                //    html = html + '<option value="' + data[i].IdPelapor + '">' + data[i].InstansiDesc + '</option>';
+                //}
+                //$("#dd_Instansi").multipleSelect('destroy');
+                //$("#dd_Instansi").html(html).multipleSelect({
+                //    filter: true
+                //}).multipleSelect('enable');
+                //$("#dd_Instansi").html(html);
+
+            },
+            complete: function (ee) {
+                if (idpelapor != "") {
+                    pop_edit(idpelapor, nama, jnskeg, stat);
+                }
+                //$(".modal-title").text("Ubah Kewajiban Pelaporan");
+                //$("#myModal").modal({
+                //    backdrop: "static",
+                //    keyboard: false
+                //});
+            }
+        });
+    }*@
+
+    @*function getDD_Informasi() {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("getDD_Informasi", "InformasiPelapor", null, Request.Url.Scheme)',
+            dataType:'JSON',
+            success: function (e) {
+                reloadlogin(e);
+                //console.log(e);
+                var data = e.data;
+                var html = "";
+                html = html + "";
+                //html = html + '<option value=""></option>';
+                for (var i = 0; i < data.length; i++) {
+                    html = html + '<option value="' + data[i].idinformation + '">' + data[i].labelement + '</option>';
+                }
+                $("#dd_Informasi").multipleSelect('destroy');
+                $("#dd_Informasi").html(html).multipleSelect({
+                    filter: true
+                }).multipleSelect('enable');
+
+
+            },
+            complete: function (ee) {
+            }
+        });
+    }*@
+
+    function get_status(a,b,cek) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("get_status", "InformasiPelapor", null, Request.Url.Scheme)?idpelapor=' + a + '&statuskantor=' + b + '&cek=' + cek,
+            dataType:'JSON',
+            success: function (e) {
+                reloadlogin(e);
+
+                var data = e.data;
+                var html = "";
+                if (cek == "new") {
+                    html = '<option value="" selected>-- Pilih Status Kantor --</option>';
+                } else {
+                    html = '<option value="">-- Pilih Status Kantor --</option>';
+                }
+                for (var i = 0; i < data.length; i++) {
+                    if (cek == "new") {
+                        html = html + '<option value="' + data[i].statuskantor + '" >' + data[i].statuskantor + '</option>';
+                    }
+                    else {
+            
+                        html = html + '<option value="' + data[i].statuskantor + '" selected>' + data[i].statuskantor + '</option>';
+                    }
+                    //html += '<option value="' + data[i].statuskantor + '" ';
+                    //if(cek=="new") html += 'selected';
+                    //html += ' > ' + data[i].statuskantor + '</option > ';
+                  
+                }
+                //$("#dd_Instansi").multipleSelect('destroy');
+                //$("#dd_Instansi").html(html).multipleSelect({
+                //    filter: true
+                //}).multipleSelect('enable');
+                if (cek == "new") {
+                    $("#dd_status").html(html).select2("destroy").select2();
+                    $("#dd_status").html(html);
+                }
+                else {
+                    $("#dd_status").html(html).select2("destroy").select2();
+                }
+            },
+            complete: function (ee) {
+                //if (a != "") {
+                //    pop_edit(a,b);
+                //}
+                $("#dd_status").prop("disabled", false);
+            }
+        });
+    }
+
+        function get_status_edit(a,b,cek) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("get_status", "InformasiPelapor", null, Request.Url.Scheme)?idpelapor=' + a + '&statuskantor=' + b + '&cek=' + cek,
+            dataType:'JSON',
+            success: function (e) {
+                reloadlogin(e);
+
+                var data = e.data;
+                var html = "";
+                if (cek == "new") {
+                    html = '<option value="" selected>-- Pilih Status Kantor --</option>';
+                } else {
+                    html = '<option value="">-- Pilih Status Kantor --</option>';
+                }
+                for (var i = 0; i < data.length; i++) {
+                    if (cek == "new") {
+                        html = html + '<option value="' + data[i].statuskantor + '" >' + data[i].statuskantor + '</option>';
+                    }
+                    else {
+            
+                        html = html + '<option value="' + data[i].statuskantor + '" selected>' + data[i].statuskantor + '</option>';
+                    }
+                    //html += '<option value="' + data[i].statuskantor + '" ';
+                    //if(cek=="new") html += 'selected';
+                    //html += ' > ' + data[i].statuskantor + '</option > ';
+                  
+                }
+                //$("#dd_Instansi").multipleSelect('destroy');
+                //$("#dd_Instansi").html(html).multipleSelect({
+                //    filter: true
+                //}).multipleSelect('enable');
+                if (cek == "new") {
+                    $("#dd_status").html(html).select2("destroy").select2();
+                    $("#dd_status").html(html);
+                }
+                else {
+                    $("#dd_status").html(html).select2("destroy").select2();
+                }
+
+                //idpelapor
+                if (pNamaBank != "") {
+                    var idpelaporhtml = '<option value="' + a + '">' + pNamaBank + '</option>';
+                    $("#dd_idpelapor").multipleSelect('destroy');
+                    $("#dd_idpelapor").html(idpelaporhtml).multipleSelect({
+                        filter: true,
+                        minimumCountSelected: 2
+                    }).multipleSelect('disable');
+                    $("#dd_idpelapor").multipleSelect('setSelects', a.split());
+                } 
+            },
+            complete: function (ee) {
+                //if (a != "") {
+                //    pop_edit(a,b);
+                //}
+                $("#dd_status").prop("disabled", true);
+                $("#dd_jeniskeg").prop("disabled", true);
+
+            }
+        });
+    }
+
+        @*function get_pelapor(a,b) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("get_pelapor", "InformasiPelapor", null, Request.Url.Scheme)?idpelapor='+a+'&statuskantor='+b,
+            dataType:'JSON',
+            success: function (e) {
+                reloadlogin(e);
+                //console.log(e);
+                var data = e.data;
+                var idp = "";
+                //html = '<option value></option>';
+                for (var i = 0; i < data.length; i++) {
+                    //html = html + '<option value="' + data[i].statuskantor + '">' + data[i].statuskantor + '</option>';
+                    idp += data[i].idpelapor;
+                    //$("#dd_bank").val(idp);
+                }
+                //$("#dd_Instansi").multipleSelect('destroy');
+                //$("#dd_Instansi").html(html).multipleSelect({
+                //    filter: true
+                //}).multipleSelect('enable');
+                //$("#dd_status").html(html);
+                $("#dd_bank").val(idp);
+
+            },
+            complete: function (ee) {
+                //if (a != "") {
+                //    pop_edit(a,b);
+                //}
+                //$("#dd_status").prop("disabled", false);
+            }
+        });
+    }*@
+
+    function get_periode(a,b,c,d) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("get_periode", "InformasiPelapor", null, Request.Url.Scheme)?periode='+a+'&idpelapor='+b+'&status='+c+'&jeniskeg='+d,
+            dataType: 'JSON',
+            beforeSend: function (e) {
+                $("#msgkp").html("<i class='fas fa-spinner fa-spin'></i> memuat informasi ..");
+            },
+            success: function (e) {
+                $("#msgkp").empty();
+                //reloadlogin(e);
+                //console.log(e);
+                var data = e.data;
+                var html = "";
+                var aqua = "";
+                //console.log(data);
+                //html = '<option value></option>';
+                for (var i = 0; i < data.length; i++) {
+                    var check = (data[i].selected == "1") ? "selected" : "";
+                    if (i > 0) {
+                        if (data[i].kelompokinformasi == data[i - 1].kelompokinformasi) {
+                            html = html + '<option value="' + data[i].test + '"' + check + '>' + data[i].Label + '</option>';
+                            if (i == data.length - 1) {
+                                html = html + '</optgroup>';
+                            }
+                        }
+                        else {
+                            html = html + '</optgroup>';
+                            html = html + '<optgroup label="' + data[i].kelompokinformasi + '">';
+                            html = html + '<option value="' + data[i].test + '"' + check + '>' + data[i].Label + '</option>';
+                        }
+                    } else {
+                        html = html + '<optgroup label="' + data[i].kelompokinformasi + '">';
+                        html = html + '<option value="' + data[i].test + '"' + check + '>' + data[i].Label + '</option>';
+                    }
+                    
+                }
+
+                if (a != "" || a != null) {
+                    $("#dd_informasi").multipleSelect('destroy');
+                    $("#dd_informasi").html(html).multipleSelect({
+                        filter: true
+                    }).multipleSelect('enable');
+                }
+                else {
+                    $("#dd_informasi").multipleSelect('destroy');
+                    $("#dd_informasi").html(html).multipleSelect({
+                        filter: true
+                    }).multipleSelect('disable');
+                }
+
+         
+
+            },
+            complete: function (ee) {
+                if (b == "") {
+                    $("#dd_informasi").multipleSelect().multipleSelect("disable");
+                }
+        
+            }
+        });
+    }
+
+    function get_bank(idpelapor) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("get_bank", "InformasiPelapor", null, Request.Url.Scheme)?idpelapor=' + idpelapor,
+            dataType:'JSON',
+            success: function (e) {
+                reloadlogin(e);
+                //console.log(e);
+                var data = e.data;
+                //console.log(idpelapor);
+                //console.log(data);
+                var html = "";
+                html = '<option value>-- Pilih Bank --</option>';
+                for (var i = 0; i < data.length; i++) {
+
+
+                        if (data[i].idKP === data[i].idpelapor) {
+                            html = html + '<option value="' + data[i].idpelapor + ',' + data[i].jeniskegiatanoperasionalbank + '" selected >' + data[i].nama + '</option>';
+                        }
+                        else {
+                            html = html + '<option value="' + data[i].idpelapor + ',' + data[i].jeniskegiatanoperasionalbank + '" >' + data[i].nama + '</option>';
+                        }
+                     
+                }
+                //$("#dd_bank").html(html);
+                if (idpelapor == "") {
+                    $("#dd_bank").html(html);
+                    $("#dd_status").val("");
+                }
+                else {
+                    $("#dd_bank").html(html).select2("destroy").select2();
+                }
+            },
+            complete: function (ee) {
+                
+                //if (idpelapor == "") {
+                    //$("#dd_bank").select2('val', '');
+                //    $("#dd_periode").select2('val', '');
+                //}
+                //$("#dd_bank").prop('disabled', false);
+                //GetDropDownJenisKegiatan()
+                //$("#dd_status").prop("disabled", true);
+            }
+        });
+    }
+
+        function get_bank_edit(idpelapor) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("get_bank", "InformasiPelapor", null, Request.Url.Scheme)?idpelapor=' + idpelapor,
+            dataType:'JSON',
+            success: function (e) {
+                reloadlogin(e);
+                //console.log(e);
+                var data = e.data;
+                //console.log(idpelapor);
+                //console.log(data);
+                var html = "";
+                html = '<option value>-- Pilih Bank --</option>';
+                for (var i = 0; i < data.length; i++) {
+
+
+                        if (data[i].idKP === data[i].idpelapor) {
+                            html = html + '<option value="' + data[i].idpelapor + ',' + data[i].jeniskegiatanoperasionalbank + '" selected >' + data[i].nama + '</option>';
+                        }
+                        else {
+                            html = html + '<option value="' + data[i].idpelapor + ',' + data[i].jeniskegiatanoperasionalbank + '" >' + data[i].nama + '</option>';
+                        }
+                     
+                }
+               
+                if (idpelapor == "") {
+                    $("#dd_bank").html(html);
+                    $("#dd_status").select2('val', '');
+                }
+                else {
+                    $("#dd_bank").html(html).select2("destroy").select2();
+                }
+            },
+            complete: function (ee) {
+                
+                //if (idpelapor == "") {
+                    //$("#dd_bank").select2('val', '');
+                //    $("#dd_periode").select2('val', '');
+                //}
+                $("#dd_bank").prop('disabled', true);
+                //GetDropDownJenisKegiatan()
+                //$("#dd_status").prop("disabled", true);
+            }
+        });
+    }
+
+    function get_idpelapor() {
+        var mdata = { bank: $("#dd_bank").val(), sk: $("#dd_status").val() };
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("get_idpelapor", "InformasiPelapor", null, Request.Url.Scheme)',
+            data: mdata,
+            dataType: 'JSON',
+            beforeSend: function (a) {
+                $("#dd_idpelapor").multipleSelect('destroy');
+                $("#dd_idpelapor").multipleSelect({
+                    placeholder: "<i class='fas fa-spinner fa-spin'></i> Memuat Id Pelapor ..."
+                }).multipleSelect('disable');
+            },
+            success: function (e) {
+                reloadlogin(e);
+                var data = e.data;
+                var html = "";
+
+                var gr_old = "", gr_new = "";
+                for (var i = 0; i < data.length; i++) {
+                    //optgroup
+                    gr_new = data[i].gr;
+                    if (gr_new != gr_old) {
+                        html = html + '<optgroup label="' + data[i].gr+'">';
+                    }
+                    html = html + '<option value="' + data[i].id + '">' + data[i].desc + '</option>';
+
+                    if (gr_new != data[((data.length - 1 == i) ? i : i + 1)].gr || (data.length - 1) == i) {
+                        html = html + '</optgroup>';
+                    }
+                    gr_old = data[i].gr;
+                }
+
+                $("#dd_idpelapor").multipleSelect('destroy');
+                $("#dd_idpelapor").html(html).multipleSelect({
+                    filter: true,
+                    //minimumCountSelected: 3
+                }).multipleSelect('enable');
+            },
+            complete: function (ee) {
+              
+            }
+        });
+    }
+</script>
+
+<script>
+    var _customizeExcelOptions = function (xlsx) {
+        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+        var numrows = 1;
+        var clR = $('row', sheet);
+
+        //update Row
+        clR.each(function () {
+            //console.log("ini", $(this));
+            var attr = $(this).attr('r');
+            var ind = parseInt(attr);
+            ind = ind + numrows;
+            $(this).attr("r", ind);
+        });
+    }
+    loadGrid();
+    function loadGrid() {
+        $('#dataTableIP').dataTable().fnDestroy();
+        tbl = $('#dataTableIP')
+            .DataTable(
+            {
+                ajax: {
+                    url: '@Url.Action("getList", "InformasiPelapor", null, Request.Url.Scheme)',
+                        type: 'POST',
+                        data: function (z) {
+                        },
+                    },
+                order: [[0, 'asc']],
+                dom: 'lBfrtip',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        className: 'btn-sm btn-success ml-3',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3,4,5,6,7]
+                        }
+                    }
+                ],
+                    columns: [
+                        {
+                            //data: 'InstansiId'
+                            render: function (data, type, full, meta) {
+                                return meta.row + 1;
+                            }
+                        },
+                        { data: 'Nama' },
+                        { data: 'Jnskeg' },
+                        { data: 'Stat' },
+                        { data: 'harian'},
+                        { data: 'mingguan'},
+                        { data: 'bulanan'},
+                        { data: 'triwulanan' },
+                        { data: 'semesteran' },
+                        { data: 'tahunan' },
+                        {
+                            render: function (data,type, row) {
+                                var edit = "";
+                                var arrDT = JSON.parse('@Html.Raw(Json.Encode(@ViewBag.ButtonAcc))');
+                                for (var i = 0; i < arrDT.length; i++) {
+                                    if (arrDT[i].MenuDesc == "Button Update") {
+                                        edit += '<button class="view btn btn-sm btn-primary" id="' + row.Nama + '" value="' + row.Jnskeg + ',' + row.Stat + '"> <i class=" fa fa-edit"></i></button > ';
+                                    }
+                                    if (arrDT[i].MenuDesc == "Button Delete") {
+                                        edit += '&nbsp;<button class="delete btn btn-sm btn-danger" id="' + row.IdPelapor + '" value="' + row.Nama + '" ><i class=" fa fa-trash"></i></button>';
+                                    }
+                                }
+                                //edit += '&nbsp;<button class="delete btn btn-sm btn-danger" id="' + row.PeriodId + '" value="' + row.PeriodName + '" ><i class=" fa fa-trash"></i></button>';
+
+                                return edit;
+                            },
+                            orderable: false
+                    }]
+
+            });
+             @*var url_Excel = '@Url.Action("ExportToExcel", "InformasiPelapor", null, Request.Url.Scheme)' ;
+             $(".dt-buttons").append('<a href="' + url_Excel + '" class="ml-3 pdf btn btn-default buttons-excel buttons-html5 btn-sm btn-success" target="_blank"><span>Excel</span></a>')*@
+
+        //tbl.on('order.dt search.dt', function () {
+            //    tbl.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+            //        cell.innerHTML = i + 1;
+            //    });
+            //}).draw();
+        $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
+            console.log(message);
+        };
+        }
+</script>
