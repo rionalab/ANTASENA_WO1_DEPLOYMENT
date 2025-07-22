@@ -1,0 +1,1372 @@
+﻿
+@{
+    ViewBag.Title = "Manajemen Metadata";
+    Layout = "~/Views/Shared/_LayoutMaster.cshtml";
+}
+<style>
+    /* width */
+    ::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+    .project-tab {
+        padding: 10%;
+        margin-top: -8%;
+    }
+
+        .project-tab #tabs {
+            background: #007b5e;
+            color: #eee;
+        }
+
+            .project-tab #tabs h6.section-title {
+                color: #eee;
+            }
+
+            .project-tab #tabs .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+                color: #0062cc;
+                background-color: transparent;
+                border-color: transparent transparent #f3f3f3;
+                border-bottom: 3px solid !important;
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+        .project-tab .nav-link {
+            border: 1px solid transparent;
+            border-top-left-radius: .25rem;
+            border-top-right-radius: .25rem;
+            color: #0062cc;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+            .project-tab .nav-link:hover {
+                border: none;
+            }
+
+        .project-tab thead {
+            background: #f3f3f3;
+            color: #333;
+        }
+
+        .project-tab a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+        }
+</style>
+
+<div class="modal" id="myModalAdd">
+    <div class="modal-dialog modal-lg">
+
+        <form id="formInputUsr">
+            <div class="modal-content">
+                <input type="hidden" name="isedit" id="isedit" />
+                <div class="modal-header">
+                    <h4 class="modal-title mdl mdshow">Tambah Lampiran</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-horizontal">
+                        <input type="hidden" id="counterparam" name="counterparam" />
+                        <div class="form-group row">
+                            <label class="col-sm-4 control-label">Judul<span style="color:red"> *</span></label>
+                            <div class="col-sm-8">
+                                <input required type="text" class="form-control" id="LampiranName" name="LampiranName" maxlength="100" pattern=".*\S+.*" oninvalid="try { (this.value == '') ? setCustomValidity('Field ini harus diisi!') : setCustomValidity(''); isvalid = (this.value == '') ? false : true; } catch (e) { }" oninput="try { setCustomValidity('')} catch (e) { }">
+                                <input type="hidden" name="LampiranNameLama" id="LampiranNameLama" />
+                                <input type="hidden" name="LampiranId" id="LampiranId" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 control-label">Tanggal Upload<span style="color:red"> *</span></label>
+                            <div class="col-sm-8">
+                                <input required type="text" name="TanggalUpload" id="TanggalUpload" class="form-control" oninvalid="try { (this.value == '') ? setCustomValidity('Field ini harus diisi!') : setCustomValidity(''); isvalid = (this.value == '') ? false : true; } catch (e) { }" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 control-label">Version<span style="color:red"> *</span></label>
+                            <div class="col-sm-8">
+                                <input required type="text" name="Version" id="Version" class="form-control" maxlength="100" pattern=".*\S+.*" oninvalid="try { (this.value == '') ? setCustomValidity('Field ini harus diisi!') : setCustomValidity(''); isvalid = (this.value == '') ? false : true; } catch (e) { }" oninput="try { setCustomValidity('') } catch (e) { }" />
+                                <input type="hidden" name="VersionLama" id="VersionLama" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 control-label">Deskripsi<span style="color:red"> *</span></label>
+                            <div class="col-sm-8">
+                                <textarea required class="form-control" id="LampiranDesc" name="LampiranDesc" pattern=".*\S+.*" oninvalid="try { (this.value == '') ? setCustomValidity('Field ini harus diisi!') : setCustomValidity(''); isvalid = (this.value == '') ? false : true; } catch (e) { }" oninput="try { setCustomValidity('') } catch (e) { }"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 control-label">Aktif</label>
+                            <div class="col-sm-8">
+                                <input type="checkbox" name="LampiranFgActive" id="LampiranFgActive" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 control-label">Pilih File<span style="color:red"> *</span></label>
+                            <div class="col-sm-8">
+                                <div id="flxexist" style="max-height:200px; overflow-y:auto;margin-bottom:10px;">
+
+
+                                </div>
+                                <table width="100%" id="flxtable">
+                                    <thead>
+                                        <tr>
+                                            <td><div id="flxtablehd"><input required type="file" class="flxfile form-control " id="flx0" name="flx0" pattern=".*\S+.*" oninvalid="try { (this.value == '') ? setCustomValidity('Field ini harus diisi!') : setCustomValidity(''); isvalid = (this.value == '') ? false : true; } catch (e) { }" oninput="try { setCustomValidity('') } catch (e) { }" /><a href="#" id="clear" class="btn btn-link btn-sm pull-right" onclick="bersihfile(this)">Bersihkan Lampiran</a></div></td>
+                                            <td></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="flxbody"></tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2" align="center" valign="middle"><button type="button" id="btnaddfiles" onclick="addFiles()" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Tambah File</button></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 control-label"></label>
+                            <div class="col-sm-6">
+
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button class="btn btn-default" id="btnClose" data-dismiss="modal">Tutup</button>
+
+                    @*tambah ini untuk trustee button*@
+                    @{
+                        var xs = true;
+                        foreach (var item in ViewBag.ButtonAcc)
+                        {
+                            if (item.MenuDesc == "Button New" || item.MenuDesc == "Button Update")
+                            {
+                                if (xs)
+                                {
+                                    <button type="button" id="submitForm" onclick="fmSubmit()" class="btn btn-primary">Simpan</button>
+                                    <button type="submit" id="submitForm_" class="" hidden></button>
+                                }
+                                xs = false;
+
+                            }
+                        }
+                    }
+                    @*tambah ini untuk trustee button*@
+
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+<div class="modal" id="myModalview">
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+            <input type="hidden" name="isedit" id="isedit" />
+            <div class="modal-header">
+                <h4 class="modal-title mdl">Lampiran</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-horizontal">
+                    <div class="form-group row">
+                        <label class="col-sm-4 control-label">Judul</label>
+                        <div class="col-sm-8">
+                            <span id="show_LampiranName"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 control-label">Deskripsi</label>
+                        <div class="col-sm-8">
+                            <span id="show_LampiranDesc"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 control-label">File</label>
+                        <div class="col-sm-8">
+                        </div>
+                    </div>
+                    <div id="show_flxexist" style="max-height:300px; overflow-y:auto;margin-bottom:10px;">
+
+
+                    </div>
+
+
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button class="btn btn-default" id="btnClose" data-dismiss="modal">Tutup</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="container-fluid">
+    <!--<h4 class="c-grey-900 mT-10 mB-30">Data Tables</h4>-->
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                <h4 class="c-grey-900 mB-20">Manajemen Metadata</h4>
+                <nav>
+                    <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-home2-tab" data-toggle="tab" href="#nav-home2" role="tab" aria-controls="nav-home2" aria-selected="true"><i class="fas fa-paperclip"></i>Struktur Metadata</a>
+                        <a class="nav-item nav-link" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="false"><i class="fas fa-paperclip"></i> Lampiran</a>
+                        @*tambah ini untuk trustee button*@
+                        @{
+                            var xj = true;
+                            foreach (var item in ViewBag.ButtonAcc)
+                            {
+                                if (item.MenuDesc == "Button New" || item.MenuDesc == "Button Update" || item.MenuDesc == "Button Delete")
+                                {
+                                    if (xj)
+                                    {
+                                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false"><i class="fas fa-user-alt"></i> Admin</a>
+                                    }
+                                    xj = false;
+
+                                }
+                            }
+                        }
+                        @*tambah ini untuk trustee button*@
+
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" style="padding:10px;">
+                        <table id="MainTable2" class="table  table-condensed table-sm table-striped table-bordered" width="100%">
+                            <thead>
+                                <tr>
+                                    <th width="10%">No</th>
+                                    <th width="90%">Lampiran</th>
+                                    <th width="10%">Version</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" style="padding:10px;">
+
+                        @{
+                            foreach (var item in ViewBag.ButtonAcc)
+                            {
+                                if (item.MenuDesc == "Button New")
+                                {
+                                    <button id="btnTambah" class="btn btn-sm btn-primary">Tambah Lampiran</button>
+                                }
+                            }
+                        }
+                        <table id="MainTable" class="table table-condensed table-sm table-striped table-bordered" width="100%">
+                            <thead>
+                                <tr>
+                                    <th width="5%">No</th>
+                                    <th width="50%">Lampiran</th>
+                                    <th width="10%">Status</th>
+                                    <th width="10%">Version</th>
+                                    <th width="15%">Upload Date</th>
+                                    <th width="10%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+
+                        </table>
+                    </div>
+                    @*tabel menu metadata*@
+                    <div class="tab-pane fade show active" id="nav-home2" role="tabpanel" aria-labelledby="nav-home2-tab" style="padding:10px;">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="informasiList" style="font-weight:bold">Informasi: </label>
+                                <select class="form-control input-sm" type="text" id="GetListInfoMM" name="GetListInfoMM"></select>
+                            </div>
+                            <div class="col-md-2" style="font-weight:bold">
+                                <label for="versioncodeList">Version Code: </label>
+                                <select class="form-control input-sm" type="text" id="VersionCodeList" name="VersionCodeList" placeholder="Semua Version Code"></select>
+                            </div>
+                            <div class="col-md-6" style="font-weight:bold">
+                                <label class="col-sm-5 control-label">Tanggal Berlaku: </label>
+                                <div class="col-sm-11">
+                                    <div class="input-group mb-1">
+                                        <label>Dari:</label>&nbsp;<input required type="text" class="form-control " id="tglAwal" name="tglAwal">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" id="btntglAwal" name="btntglAwal" type="button"><i class="fas fa-calendar-alt"></i></button>
+                                        </div>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <label>Ke:</label>&nbsp;<input required type="text" class="form-control " id="tglAkhir" name="tglAkhir">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" id="btntglAkhir" name="btntglAkhir" type="button"><i class="fas fa-calendar-alt"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <label for="submitMM">&nbsp;&nbsp;</label>
+                                <button onClick="submitMM()" type="button" class="btn btn-info" id="submitMM">Submit</button>
+                            </div>
+                        </div>
+                        <br />
+                        <div id="div-tbl">
+                            <table id="dataTableMM" class="table table-condensed  table-sm table-striped table-bordered compact" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Informasi</th>
+                                        <th>Versi</th>
+                                        <th>Mulai Berlaku</th>
+                                        <th>Akhir Berlaku</th>
+                                        <th>Unduh</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="LinkList" style="border:1px dotted black; padding:10px;">
+                                    <label>Metadata Aktif :&nbsp;</label>
+                                    <a class="btn btn-primary" href="@Url.Action("testallcsv", "LampiranFile", null, Request.Url.Scheme)?versioncode=all">CSV</a>
+                                    <a class="btn btn-primary" href="@Url.Action("testallxml", "LampiranFile", null, Request.Url.Scheme)?versioncode=all">XML</a>
+                                    <a class="btn btn-primary" href="@Url.Action("testallsql", "LampiranFile", null, Request.Url.Scheme)?versioncode=all">SQL</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="fmdownl" action="@Url.Action("/Download", "LampiranFile", null, Request.Url.Scheme)" method="post" target="_blank">
+    <input type="hidden" name="tf" id="tf" />
+    <input type="hidden" name="att_id" id="att_id" />
+</form>
+@Scripts.Render("~/bundles/ckeditor")
+<script>
+    var isvalid = true;
+    $(document).ready(function () {
+        $.fn.dataTable.moment('DD-MM-YYYY HH:mm:ss');
+
+        //$("#MainTable").DataTable();
+        //renderList();
+
+//-- start metadata management --
+        var tbl;
+        GetListInfoMM();
+        $("#GetListInfoMM").select({
+            placeholder: "Please Select",
+            allowClear: true,
+            width: '100%'
+        });
+        $("#VersionCodeList").select({
+            placeholder: "Please Select",
+            allowClear: true,
+            width: '100%'
+        });
+        $('#GetListInfoMM').on('change', function () {
+            console.log(this.value);
+            VersionCodeList();
+        });
+
+        document.getElementById("tglAwal").onkeypress = stopRKey;
+        document.getElementById("tglAkhir").onkeypress = stopRKey;
+//-- end metadatamanagement --
+
+
+        $("#btnTambah").on("click", function () {
+            $("#flxtablehd").html('<input required type="file" class="flxfile form-control " id="flx0" name="flx0" pattern=".*\S+.*" oninvalid="setCustomValidity(\'Field ini harus diisi!\')" oninput="try { setCustomValidity(\'\') } catch (e) { }" /><a href="#" id="clear" class="btn btn-link btn-sm pull-right" onclick="bersihfile(this)">Bersihkan Lampiran</a></div>');
+            $("#flxexist").empty();
+            $(".mdshow").html("Tambah Lampiran");
+            $("#isedit").val(0);
+            $("#formInputUsr")[0].reset();
+            $("#flxbody").empty();
+            $("#myModalAdd").modal("show");
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yyyy = today.getFullYear();
+
+            today = dd + '-' + mm + '-' + yyyy;
+            $("#TanggalUpload").val(today);
+            $("#TanggalUpload").prop("disabled", true);
+        });
+        $("#flxtable").on("click", "#DeleteButton", function () {
+            $(this).closest("tr").remove();
+        });
+
+        $("#formInputUsr").submit(function (e) {
+            var x = $("#isedit").val();
+            var flxfg = $(this).find(".flxfg");
+
+
+
+            if (x == 0) {
+                if (checkname()) {
+                    senddt(this);
+                }
+                else {
+                    $.alert("Judul dan Version sudah ada, mohon pilih judul lain !")
+                }
+            } else {
+
+                if (flxfg.length >= 1) {
+                    if (checknamelama()) {
+
+                        senddt(this);
+                    } else {
+                        $.alert("Judul dan Version sudah ada, mohon pilih judul lain !")
+                    }
+                }
+                else {
+                    $.alert("Mohon pilih minimal 1 file !")
+                }
+            }
+
+
+            e.preventDefault();
+        })
+
+        $("#flxtable").on("change", "input.flxfile", function (e) {
+            var data = e.target.files;
+            var id = this.id;
+            var a = "";
+            var total = 0;
+            for (var i = 0; i < data.length; i++) {
+                var file = data[i];
+                var countsize = file.size;
+
+                if (i != data[i].length - 1) {
+                    total += countsize + "+";
+                } else {
+                    total += countsize;
+                }
+
+
+
+                const blob = file.slice(0, 4);
+                const filereader = new FileReader();
+
+                filereader.onloadend = function (evt) {
+                    if (evt.target.readyState === FileReader.DONE) {
+                        const uint = new Uint8Array(evt.target.result)
+                        let bytes = []
+                        uint.forEach((byte) => {
+                            bytes.push(byte.toString(16))
+                        });
+                        const hex = bytes.join('').toUpperCase();
+                        if (a == "") {
+                            if (
+                                file.type == "application/vnd.msexcel" || file.type == "application/zip" ||
+                                file.type == "application/pdf" || file.type == "application/msword" ||
+                                file.type == "application/vnd.ms-excel" || file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+                                file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                                file.type == "application/zip" || file.type == "application/x-rar-compressed" || file.type == "application/x-zip-compressed" || file.type == "application/octet-stream" || file.type == "" ) {
+
+                                var fnnam = String(file.name).split(".");
+                                var xnnam = String(fnnam[fnnam.length - 1]);
+                                //var allw = ['xls', 'xlsx', 'txt', 'jpg', 'csv','doc','docx','pdf','png','jpeg','zip','rar','xml']
+                                //var allw = ['text', 'txt', 'xls', 'zip', 'xslt', 'xbl', 'xsl', 'xml', 'pdf', 'doc', 'jfif', 'pjpeg', 'jpeg', 'pjp', 'jpg', 'png', 'xlsx', 'docx', 'rar', 'json', 'csv', 'pptx', 'ppt']
+                                var allw = ['zip','rar','pdf','xls','xlsx','doc','docx']
+                                if (allw.includes(xnnam)) {
+
+
+                                    if (getAllowMimetype(hex) == '') {
+                                        a += "Tipe file tidak dapat diunggah";
+                                        $.alert({
+                                            title: 'Peringatan',
+                                            type: 'red',
+                                            content: 'Tipe file tidak dapat diunggah',
+                                            buttons: {
+                                                ok: {
+                                                    btnClass: 'btn-red',
+                                                    action: function () {
+                                                        $("#" + id).replaceWith($("#" + id).val('').clone(true));
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    } else {
+
+                                        var hasil = 0;
+                                        var gabungan = total.split("+");
+
+                                        for (var i = 0; i < gabungan.length; i++) {
+                                            hasil += gabungan[i] << 0;
+                                        }
+                                        if (hasil > 53886080) {
+                                            a += "Tipe file tidak dapat diunggah";
+                                            $("#counterparam").val("0")
+                                            $.alert({
+                                                title: 'Peringatan',
+                                                type: 'red',
+                                                content: 'File Yang diUpload Melebihi Dari 50 MB',
+                                                buttons: {
+                                                    ok: {
+                                                        btnClass: 'btn-red',
+                                                        action: function () {
+                                                            $("#" + id).replaceWith($("#" + id).val('').clone(true));
+                                                            $("#counterparam").val("0")
+                                                        }
+                                                    }
+                                                }
+                                            });
+
+                                        }
+                                    }
+
+                                }
+                                else {
+                                    a += "Tipe file tidak dapat diunggah";
+                                    $.alert({
+                                        title: 'Peringatan',
+                                        type: 'red',
+                                        content: 'Tipe file tidak dapat diunggah',
+                                        buttons: {
+                                            ok: {
+                                                btnClass: 'btn-red',
+                                                action: function () {
+                                                    $("#" + id).replaceWith($("#" + id).val('').clone(true));
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            } else {
+                                a += "Tipe file tidak dapat diunggah";
+                                $.alert({
+                                    title: 'Peringatan',
+                                    type: 'red',
+                                    content: 'Tipe File tidak dapat diunggah',
+                                    buttons: {
+                                        ok: {
+                                            btnClass: 'btn-red',
+                                            action: function () {
+                                                $("#" + id).replaceWith($("#" + id).val('').clone(true));
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                        else {
+                            return false;
+                        }
+
+                    }
+                }
+                if (a != "") { return false; }
+                filereader.readAsArrayBuffer(blob);
+
+
+            }
+        });
+
+        $("#MainTable").on("click", "button.view", function () {
+            $("#formInputUsr")[0].reset();
+            $("#flxbody").empty();
+        });
+        $("#MainTable2").on("click", "button.show", function () {
+            $("#show_flxexist,#show_LampiranName,#show_LampiranDesc").empty()
+            getdetailshow(this.id)
+        });
+
+        $("#MainTable").on("click", "button.delete", function () {
+            var idtm = this.id;
+            $.confirm({
+                title: 'Konfirmasi !',
+                content: 'Apakah anda yakin ingin menghapus data <b>' + this.value + '</b> ?',
+                type: 'red',
+                typeAnimated: true,
+                buttons: {
+
+                    tutup: function () {
+                    },
+                    tryAgain: {
+                        text: 'Hapus',
+                        btnClass: 'btn-red',
+                        action: function () {
+                            dltx(idtm);
+                        }
+                    }
+                }
+            });
+        });
+        $("#MainTable").on("click", "button.edit", function () {
+            $(".mdshow").html("Edit Lampiran");
+            $("#flxtablehd").empty();
+            $("#isedit").val(1);
+            $("#formInputUsr")[0].reset();
+            $("#flxbody").empty();
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yyyy = today.getFullYear();
+
+            today = dd + '-' + mm + '-' + yyyy;
+            $("#TanggalUpload").val(today);
+            $("#TanggalUpload").prop("disabled", true);
+            getdetail(this.id);
+        });
+
+    });
+
+    var fgClick = 0;
+    function fmSubmit() {
+        var fgFm = true;
+        var ListFm = document.forms["formInputUsr"].getElementsByTagName("input");
+        for (var i = 0; i < ListFm.length; i++) {
+            if (ListFm[i].required) {
+                if ($("#" + ListFm[i].id).val().trim() == "") {
+                    fgFm = false;
+                } else {
+                    fgFm = (fgFm) ? true : false;
+                }
+            }
+        }
+        setTimeout(function () {
+            //console.log("valid", isvalid, "fg", fgFm, "click", fgClick);
+            if (!isvalid || !fgFm) {
+                if (fgClick == 0) {
+                    fmSubmit();
+                    fgClick++;
+                } else {
+                    fgClick = 0;
+                }
+            }
+            else {
+                isvalid = true;
+            }
+            $('#submitForm_').trigger('click');
+        }, 1);
+    }
+
+
+//-- start metadata management --
+    function stopRKey(evt) {
+        return false;
+    } 
+
+    function GetListInfoMM() {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("GetListInfoMM", "LampiranFile", null, Request.Url.Scheme)',
+            dataType: 'JSON',
+            success: function (e) {
+                console.log(e);
+                var data = e.data;
+                var html = "";
+
+                //html = html + '<option value=""></option>';
+                html = '';
+                for (var i = 0; i < data.length; i++) {
+                    html = html + '<option value="' + data[i].idinformation + '">' + data[i].labelement + '</option>';
+                }
+                $("#GetListInfoMM").empty();
+                $("#GetListInfoMM").append(html);
+                VersionCodeList();
+                //iddInformasi = ival;
+            },
+            complete: function (ee) {
+
+                //$("#VersionCodeList").prop("enabled", true);
+                //$("#VersionCodeList").prop("disabled", true);
+                //$("#dd_informasi").select2('val', iddInformasi.split(','));
+            }
+        });
+    }
+
+    function VersionCodeList() {
+    //$("#VersionCodeList").prop("disabled", false);
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("VersionCodeList", "LampiranFile", null, Request.Url.Scheme)?idinformation=' + $("#GetListInfoMM").val()  ,
+            dataType:'JSON',
+            success: function (e) {
+                var data = e.data;
+                var html = "";
+
+                //html = html + '<option value=""></option>';
+                for (var i = 0; i < data.length; i++) {
+                    html = html + '<option value="' + data[i].versioncode + '">' + data[i].versioncode + '</option>';
+                }
+                $("#VersionCodeList").empty();
+                $("#VersionCodeList").append(html);
+
+            },
+            complete: function (ee) {
+
+                //$("#dd_Periode").prop("disabled", true);
+
+            }
+        });
+    }
+
+    function submitMM() {
+        var StartDate = $("#tglAwal").val().split("-");
+        var EndDate = $("#tglAkhir").val().split("-");
+        var sDate = new Date(StartDate[2], StartDate[1] - 1, StartDate[0]);
+        var eDate = new Date(EndDate[2], EndDate[1] - 1, EndDate[0]);
+        if (sDate > eDate) {
+            $.alert({
+                title: 'Peringatan',
+                icon: 'fa fa-warning',
+                type: 'red',
+                content: 'Harap periksa kembali tanggal berlaku.'
+            });
+            return false;
+        } else if (StartDate != "" && EndDate == "") {
+            $.alert({
+                title: 'Peringatan',
+                icon: 'fa fa-warning',
+                type: 'red',
+                content: 'Harap periksa kembali tanggal berlaku.'
+            });
+            return false;
+        } else if (StartDate == "" && EndDate != "") {
+            $.alert({
+                title: 'Peringatan',
+                icon: 'fa fa-warning',
+                type: 'red',
+                content: 'Harap periksa kembali tanggal berlaku.'
+            });
+            return false;
+        } else {
+            $('#dataTableMM').DataTable().ajax.reload();
+        }
+        //$("#div-tbl").show();
+    }
+
+    console.log();
+    $("#tglAwal").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: 'dd-mm-yy'
+    });
+    console.log();
+
+    $("#btntglAwal").click(function () {
+        $("#tglAwal").datepicker("show");
+    });
+
+    console.log();
+    $("#tglAkhir").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: 'dd-mm-yy'
+    });
+    console.log();
+
+    $("#btntglAkhir").click(function () {
+        $("#tglAkhir").datepicker("show");
+    });
+
+
+//-- end metadata management --
+
+    function dltx(x) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("/deldt", "LampiranFile", null, Request.Url.Scheme)',
+            data: { id: x },
+            dataType: 'JSON',
+            success: function (data) {
+                reloadlogin(data);
+                if (data.success) {
+                    $.confirm({
+                        title: "Berhasil",
+                        content: data.message,
+                        type: "green",
+                        typeAnimated: true,
+                        buttons: {
+                            tryAgain: {
+                                text: 'OK',
+                                btnClass: 'btn-success',
+                                action: function () {
+                                    $("#MainTable,#MainTable2,#dataTableMM").DataTable().ajax.reload();
+
+                                }
+                            }
+                        }
+                    });
+
+                }
+
+            }
+        });
+    }
+
+     function renderList() {
+            $.ajax({
+            type: 'GET',
+            url: '@Url.Action("/getlistactive", "LampiranFile", null, Request.Url.Scheme)',
+            dataType:'JSON',
+            success: function (data) {
+                reloadlogin(data);
+                console.log(data);
+                var ht = "<ul>";
+                $.each(data.data, function (i, o) {
+                   // ht += "<li><button type='button' class='btn btn-link'>"+o.LampiranName+"</button></li>";
+                    ht += "<li><a href='#'>" + o.LampiranName + "</a></li>";
+
+                })
+                $("#linklist").html(ht+"</ul>");
+            },
+            complete: function () {
+
+            }
+        });
+
+
+    }
+
+    function token(a, iatt_id) {
+        $("#tf").val(a);
+        $("#att_id").val(iatt_id);
+        $("#fmdownl").submit();
+
+    }
+    function getMimetype(signature) {
+
+
+        if (signature.match('4D5A90030004000FFFF00B80000000400000000000000000000000000000000000080000E1FBAE0B49CD21B814CCD21546869732070726F6772616D2063616E6E6F742062652072756E20696E20444F53206D6F64652EDDA')) {
+            return 'EXE FILE'
+        } else if (signature.match('52494646E86940415649204C495354C00006864726C61766968380009B6F005E74100000108006E000000010002C000100F000000000000000000004C495354740007374726C737472683800076696473637669640000')) {
+            return 'AVI FILE'
+        }
+        else if (signature.match('D0CF11E0A1B11AE100000000000000003E040FEFFC06000000030006000100000000100020001000FEFFFFFF00000000040008000C000100001400FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF')) {
+            return 'MSI file'
+        } else if (signature.match('4944333000006654434F4E000A00043696E656D6174696354414C4200016000596F755475626520417564696F204C6962726172795449543200010000496D70616374204D6F64657261746F54504531000E0004B6576696E204D61634C656F64FFFBC840000')) {
+            return 'MP3 file'
+        }
+        else if (signature.match('504B34A00000149D7C4A00000000000090004D4554412D494E462F504B34A00080139D7C4A1925CF166A00081000140004D4554412D494E462F4D414E49464553542E4D46F34DCCCB4C4B2D2ED1D4B2D2ACECCCFB35230D433E0E5722ACDCC29D175AA')) {
+            return 'JAR File'
+            //} else if (signature.match('4A415243')) {
+            //    return 'JAR file'
+        } else if (signature.match('4D5343460000C5580000004400000003110304000001400000100C5580038180000000000BE000301028CC00000000DB48DA2A2005072696E74436F6E74726F6C5F7265735F74682E646C6C028340028CC0000DB48')) {
+            return 'CAB File'
+            //} else if (signature.match('4D534346')) {
+            //    return 'CAB File'
+        }
+        else if (signature.match('01005374616E646172642041434520444202000B56E362609C255E9A96772403F09C7E9F90FF859A31C579BAED30BCDFCC9D63D9E4C39F46FB8ABC4E7751EC37ACEE9CFA37F428E6E21C8A60A53E7B364D8DFB1865E13433E5B133C5CB795B631F7C2AA3E07C9981F98FD23A61B315F60')) {
+            return 'Access File'
+
+        } else if (signature.match('EFBBBF7573696E672053797374656D3BDA7573696E672053797374656D2E436F6C6C656374696F6E732E47656E657269633BDA7573696E672053797374656D2E4C696E713BDA7573696E672053797374656D2E5765623BDADA6E616D65737061636520416E746173656E612E4D6F64656C73D')) {
+            return 'CLASS File'
+        } else {
+            return ''
+        }
+    }
+
+    const getAllowMimetype = (signature) => {
+        if (signature.match('25504446')) {
+            return 'PDF FILE'
+        } else if (signature.match('504B0304')) {
+            return 'ZIP FILE'
+        } else if (signature.match('504B4C49')) {
+            return 'ZIP FILE'
+        } else if (signature.match('57696E5A')) {
+            return 'ZIP file'
+        } else if (signature.match('52617221')) {
+            return 'RAR file'
+        } else if (signature.match('D0CF11E0')) {
+            return 'DOC File'
+        } else if (signature.match('504B34')) {
+            return 'XLSX File'
+        //} else if (signature.match('504B0506')) {
+        //    return 'DOCX File_jdbc'
+        //} else if (signature.match('D0CF11E0A1B11AE1')) {
+        //    return 'DOCX File_jdbc2'
+        } else {
+            return ''
+        }
+    }
+
+    function addFiles() {
+        var x = $('#flxtable >tbody >tr').length;
+        $("#flxbody").append('<tr><td valign="top"><input required type="file" class="form-control flxfile flxfg" id="flx' + (x + 1) + '" name="flx' + (x + 1) +'" pattern=".*\S+.*" oninvalid="setCustomValidity(\'Field ini harus diisi!\')" oninput="try { setCustomValidity(\'\') } catch (e) { }" /><a href="#" id="clear" class="btn btn-link btn-sm pull-right" onclick="bersihfile(this)">Bersihkan Lampiran</a></td><td valign="top"><button type="button" class="btn btn-sm btn-danger" onclick="delflx(this)"><i class="fas fa-trash"></i></button></td></tr>');
+
+    }
+
+    function delflx(a, iid = "") {
+        if (iid != "") {
+            $.ajax({
+               type: 'POST',
+               url: '@Url.Action("/deleteAtt", "LampiranFile", null, Request.Url.Scheme)',
+                data: { id: iid },
+               dataType: 'JSON',
+               success: function (data) {
+                   reloadlogin(data);
+                   console.log(data)
+                   if (data.success) {
+                       $(a).parent().closest("tr").remove()
+                   }
+               },
+                complete: function () {
+                    $("#MainTable,#MainTable2,#dataTableMM").DataTable().ajax.reload();
+               }
+            });
+        }
+    }
+
+    function bersihfile(a) {
+        var x = $(a).parent().find("input[type='file']");
+        var id = x[0].id;
+        $("#" + id).replaceWith($("#" + id ).val('').clone(true));
+
+    }
+
+    function checkname() {
+        try
+        {
+            var jsn = $.ajax({
+                type: 'POST',
+                url: '@Url.Action("/checkName", "LampiranFile", null, Request.Url.Scheme)',
+                data: { name: $("#LampiranName").val(), varsi: $("#Version").val() },
+                async: false,
+                dataType: 'JSON'
+            }).responseText;
+            var jkw = JSON.parse(jsn)
+            return (Object.keys(jkw.data).length > 0) ? false : true;
+        }
+        catch (e)
+        {
+            return false;
+        }
+
+    }
+
+     function checknamelama() {
+        try
+        {
+            if ($("#LampiranNameLama").val() != $("#LampiranName").val() || $("#VersionLama").val() != $("#Version").val()) {
+                return checkname();
+                @*var jsn = $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("/checkNameLama", "LampiranFile", null, Request.Url.Scheme)',
+                    url: '@Url.Action("/checkNameLama", "LampiranFile", null, Request.Url.Scheme)',
+                    data: { namelama: $("#LampiranNameLama").val(), namebaru: $("#LampiranName").val(), versi: $("#Version").val() },
+                    async: false,
+                    dataType: 'JSON'
+                }).responseText;
+                var jkw = JSON.parse(jsn)
+                return (Object.keys(jkw.data).length > 0) ? false : true;*@
+            } else {
+                return true;
+            }
+        }
+        catch (e)
+        {
+            return false;
+        }
+
+    }
+    function getdetail(x)
+    {
+           $.ajax({
+               type: 'POST',
+               url: '@Url.Action("/getlistid", "LampiranFile", null, Request.Url.Scheme)',
+               data: { id: x },
+               dataType: 'JSON',
+               success: function (data) {
+                   reloadlogin(data);
+                   console.log(data);
+                   if (Object.keys(data.data).length > 0) {
+                       $.each(data.data[0], function (i, o) {
+
+                           if (i == "LampiranFgActive")
+                           {
+                               var x = (o == "Y") ? true : false;
+                               $("#" + i).prop("checked", x);
+                           }
+                           if (i == "file_token")
+                           {
+                               var x = String(o).split(";");
+                               renderExist(x, data.data[0].att_id)
+                           }
+                           if (i == "LampiranName") {
+                               $("#LampiranNameLama").val(o);
+                           } 
+                           if (i == "Version") {
+                               $("#VersionLama").val(o);
+                           } 
+                           $("#" + i).val(o);
+                       })
+                   }
+               },
+               complete: function () {
+                   $("#myModalAdd").modal("show");
+               }
+            });
+    }
+
+    function getdetailshow(x)
+    {
+           $.ajax({
+               type: 'POST',
+               url: '@Url.Action("/getlistid", "LampiranFile", null, Request.Url.Scheme)',
+               data: { id: x },
+               dataType: 'JSON',
+               success: function (data) {
+                   reloadlogin(data);
+                   console.log(data);
+                   if (Object.keys(data.data).length > 0) {
+                       $.each(data.data[0], function (i, o) {
+
+
+                           if (i == "file_token")
+                           {
+                               var x = String(o).split(";");
+                               renderExistshow(x, data.data[0].att_id)
+                           }
+                           $("#show_" + i).html(o);
+                       })
+                   }
+               },
+               complete: function () {
+                   $("#myModalview").modal("show");
+
+               }
+            });
+    }
+    function renderExistshow(data, iatt_id) {
+        var ht = "<table width='100%' class='table table-bordered'>";
+        iatt_id = iatt_id.split(";");
+        var i = 0;
+        $.each(data, function (i, o) {
+
+            var sx = String(o).split("~");
+
+
+            if (o != "" && sx.length > 1) {
+                ht += "<tr>";
+                ht += "<td width='70%'>";
+
+                ht += "<p class='flxfg'>" + sx[0] + "</p><br/>";
+                ht += '<div class="btn-group btn-group-sm btnFile" role="group"><button type="button"class="btn btn-sm btn-info" onclick="token(\'' + sx[1] + '\',' + iatt_id[i]+')"><i class="fas fa-download"></i></button></div>';
+                ht += '</td>';//'<td width="30%"></td>';
+                ht += "</td>";
+            }
+            i = i+1;
+        })
+        ht += "</table>";
+        $("#show_flxexist").html(ht);
+    }
+
+    function renderExist(data, iatt_id) {
+        var ht = "File yang sudah diunggah:<br/><table width='100%' class='table table-bordered'>";
+        iatt_id = iatt_id.split(";");
+        var i = 0;
+        $.each(data, function (i, o) {
+
+            var sx = String(o).split("~");
+
+
+            if (o != "" && sx.length > 1)
+            {
+                ht += "<tr>";
+                ht += "<td width='70%'>";
+
+                ht += "<p class='flxfg'>" + sx[0] + "</p><input type='hidden' value='" + sx[0] + "' name='flxhidden' /><br/>";
+                ht += '<div class="btn-group btn-group-sm btnFile" role="group"><button type="button"class="btn btn-sm btn-info" onclick="token(\'' + sx[1] + '\',' + iatt_id[i] + ')"><i class="fas fa-download"></i></button> <button type="button" class="btn btn-sm btn-danger" onclick="delflx(this,' + iatt_id[i]+')"><i class="fas fa-trash"></i></button></div>';
+                ht += '</td>';//'<td width="30%"></td>';
+                ht += "</td>";
+            }
+            i = i + 1;
+        })
+        ht += "</table>";
+        $("#flxexist").html(ht);
+    }
+
+    function senddt(a)
+    {
+        var x = $("#isedit").val();
+        var mdt = new FormData($("#formInputUsr")[0]);
+        if (x == 1) {
+            var kx = [];
+            $("input[name^='flxhidden']").each(function (i, o) { kx.push($(this).val()) });
+            mdt.set("filelama", kx.join(";"))
+        }
+        //console.log(mdata);
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("senddt", "LampiranFile", null, Request.Url.Scheme)',
+            enctype: 'multipart/form-data',
+            processData: false,  // Important!
+            contentType: false,
+            cache: false,
+            data: mdt,
+            dataType:"json",
+            beforeSend: function (a) {
+                $("#submitForm").prop("disabled", true).html("<i class='fa fa-spinner fa-spin'></i>");
+            },
+            success: function (a) {
+                reloadlogin(a);
+                $("#myModalAdd").modal("hide");
+                $("#submitForm").prop("disabled", false).text("Simpan");
+                console.log(a);
+                if (a.success) {
+
+                    $.confirm({
+                        title: "Berhasil",
+                        content: a.message,
+                        type: "green",
+                        typeAnimated: true,
+                        buttons: {
+                            tryAgain: {
+                                text: 'OK',
+                                btnClass: 'btn-success',
+                                action: function () {
+                                    //$("#dataTablePGM").DataTable().ajax.reload();
+                                    //("formInputPGM").remove();
+                                    $("#MainTable,#MainTable2,#dataTableMM").DataTable().ajax.reload();
+
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    $.confirm({
+                        title: "Gagal",
+                        content: a.message,
+                        type: "red",
+                        typeAnimated: true,
+                        buttons: {
+                            tryAgain: {
+                                text: 'OK',
+                                btnClass: 'btn-danger',
+                                action: function () {
+                                    $("#MainTable,#MainTable2,#dataTableMM").DataTable().ajax.reload();
+                                    //$("formInputPGM").remove();
+
+                                }
+                            }
+                        }
+                    });
+                }
+
+            },
+            complete: function (a) {
+                $("#myModal").modal("hide");
+            }
+        });
+
+        return false;
+    }
+
+
+
+
+</script>
+<script>
+    //$("#dataTableTM").DataTable();
+
+       var tbl2 = $('#MainTable2')
+        .DataTable(
+            {
+                ajax: {
+                    url: '@Url.Action("getlistactive", "LampiranFile", null, Request.Url.Scheme)',
+                    type: 'GET'
+                },
+                order: [[0, 'asc']],
+                lengthChange: false,
+                columns: [
+                    {
+                        render: function (data, type, full, meta) {
+                            return meta.row + 1;
+                        }
+                    },
+                    {
+
+                        data: 'LampiranName',
+                        render: function (data, type, full) {
+                            return "<button type='button' class='show btn btn-link' id='" + full.LampiranId + "'>" + data + "</button>"
+                        }
+                    },
+                    {
+                        data: 'Version'
+                    }]
+
+            });
+    var tbl = $('#MainTable')
+        .DataTable(
+            {
+                ajax: {
+                    url: '@Url.Action("getlist", "LampiranFile", null, Request.Url.Scheme)',
+                    type: 'GET'
+                },
+                order: [[4, 'desc']],
+                columns: [
+                    {
+                        render: function (data, type, full, meta) {
+                            return meta.row + 1;
+                        }
+                    },
+                    {
+
+                        data: 'LampiranName'
+                    },
+                    {
+
+                        data: 'LampiranFgActive',
+                        render: function (data,
+                            type, row) {
+                            return data == 'Y' ? "<span class='badge badge-success'>Aktif</span>" : "<span class='badge badge-secondary'>Tidak Aktif</span>";
+
+                       }
+
+                    },
+                    {
+                        data: 'Version'
+                    },
+                    {
+                       data: 'Upload'
+                    },
+                    {
+                        render: function (data,
+                            type, row) {
+                            var edit = "";
+
+                             @*tambah ini untuk trustee button*@
+                                var arrDT = JSON.parse('@Html.Raw(Json.Encode(@ViewBag.ButtonAcc))');
+                                for (var i = 0; i < arrDT.length; i++) {
+                                    if (arrDT[i].MenuDesc == "Button Update") {
+                                        edit += '<button class="edit btn btn-sm btn-primary" id="' + row.LampiranId + '" value="' + row.LampiranName + '" ><i class=" fa fa-edit"></i></button>';
+                            }
+                                    if (arrDT[i].MenuDesc == "Button Delete") {
+
+                                        edit += '&nbsp;<button class="delete btn btn-sm btn-danger" id="' + row.LampiranId + '" value="' + row.LampiranName + '" ><i class=" fa fa-trash"></i></button>';
+
+                                      }
+                                }
+                                @*tambah ini untuk trustee button*@
+
+                            return edit;
+                        },
+                        orderable: false
+                    }]
+
+            });
+
+    $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
+        console.log(message);
+    };
+    $(document).ready(function () {
+        var tbl3 = $('#dataTableMM')
+            .DataTable(
+                {
+
+                    ajax: {
+                        url: '@Url.Action("GetListMetadata", "LampiranFile", null, Request.Url.Scheme)',
+                        type: 'GET',
+                        data: function (submitMM) {
+                            submitMM.idinformation = $("#GetListInfoMM").val();
+                            submitMM.versioncode = $("#VersionCodeList").val();
+                            submitMM.dateStart = $("#tglAwal").val();
+                            submitMM.dateEnd = $("#tglAkhir").val();
+                            console.log(submitMM);
+                        }
+                    },
+                    order: [[0, 'asc']],
+                    columns: [
+                        {
+                            //data: 'id'
+                            render: function (data, type, full, meta) {
+                                return meta.row + 1;
+                            }
+                        },
+                        {
+                            data: 'idinformation'
+                        },
+                        {
+                            data: 'versioncode'
+                        },
+                        {
+                            data: 'dateStart'
+
+                        },
+                        {
+                            data: 'dateEnd'
+
+                        },
+                        {
+                            render: function (data, type, row) {
+                                console.log(data, type, row);
+                                var a = row.idinformation;
+                                var b = a.replace("&", "dan");
+                                var button = "";
+                                var params = {
+                                    versioncode: row.versioncode,
+                                    idinformation: b,
+                                    startDate: row.dateStart,
+                                    endDate: row.dateEnd
+                                };
+                                var urls = {
+                                    csv: '@Url.Action("testcsv", "LampiranFile", null, Request.Url.Scheme)',
+                                    xml: '@Url.Action("testxml", "LampiranFile", null, Request.Url.Scheme)',
+                                    sql: '@Url.Action("testsql", "LampiranFile", null, Request.Url.Scheme)'
+                                }
+
+                                const getBtn = (type, label) => {
+                                    return `<a 
+                                        class="btn btn-primary" 
+                                        href="${urls[type]}?${$.param(params)}">${label}</a>&nbsp;`;
+                                };
+
+                                button += getBtn('csv', 'csv');
+                                button += getBtn('xml', 'xml');  
+                                button += getBtn('sql', 'sql');
+
+                                return button;
+                            },
+                            orderable: false
+                        }]
+
+                });
+    });
+        //tbl.on('order.dt search.dt', function () {
+        //    tbl.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+        //        cell.innerHTML = i + 1;
+        //    });
+        //}).draw();
+        $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
+            console.log(message);
+        };
+
+</script>
