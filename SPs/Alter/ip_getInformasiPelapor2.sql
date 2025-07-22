@@ -1,5 +1,5 @@
 
-CREATE PROCEDURE [dbo].[ip_getInformasiPelapor2]
+alter PROCEDURE [dbo].[ip_getInformasiPelapor2]
 AS
 BEGIN
 

@@ -1,5 +1,5 @@
 
-CREATE PROCEDURE [dbo].[ip_getperiode3]
+alter PROCEDURE [dbo].[ip_getperiode3]
    @periode VARCHAR(2),
    @idpelapor VARCHAR(9),
    @status VARCHAR(MAX),
