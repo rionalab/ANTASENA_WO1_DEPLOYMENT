@@ -1,6 +1,3 @@
-USE [antasenaDBTest]
-GO
-   /****** Object:  StoredProcedure [dbo].[mm_getrecordcsv]    Script Date: 6/20/2025 9:44:31 PM ******/
 SET
    ANSI_NULLS ON
 GO

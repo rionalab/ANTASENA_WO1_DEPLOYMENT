@@ -1,6 +1,3 @@
-USE [antasenaDBTest]
-GO
-	/****** Object:  StoredProcedure [dbo].[pg_getTreeInformasi]    Script Date: 7/18/2025 6:38:47 AM ******/
 SET
 	ANSI_NULLS ON
 GO

@@ -1,6 +1,3 @@
-USE [antasenaDBTest]
-GO
-	/****** Object:  StoredProcedure [dbo].[mm_exportsingleSql]    Script Date: 6/17/2025 8:25:24 PM ******/
 SET
 	ANSI_NULLS ON
 GO

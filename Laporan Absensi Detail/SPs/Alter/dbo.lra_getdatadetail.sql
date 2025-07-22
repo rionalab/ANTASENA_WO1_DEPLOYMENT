@@ -1,6 +1,3 @@
-USE [antasenaDBTest]
-GO
-   /****** Object:  StoredProcedure [dbo].[lra_getdatadetail]    Script Date: 5/16/2025 4:27:55 PM ******/
 SET
    ANSI_NULLS ON
 GO

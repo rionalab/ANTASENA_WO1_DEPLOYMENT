@@ -1,6 +1,3 @@
-USE [antasenaDBTest]
-GO
-   /****** Object:  StoredProcedure [dbo].[p_getAllPeriodeByID]    Script Date: 5/22/2025 3:33:21 PM ******/
 SET
    ANSI_NULLS ON
 GO

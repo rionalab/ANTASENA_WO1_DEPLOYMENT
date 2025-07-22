@@ -1,6 +1,3 @@
-USE [antasenaDBTest]
-GO
-   /****** Object:  StoredProcedure [dbo].[Id_getAllIndikasiDenda]    Script Date: 7/18/2025 10:26:45 AM ******/
 SET
    ANSI_NULLS ON
 GO

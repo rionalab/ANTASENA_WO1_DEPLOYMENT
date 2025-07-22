@@ -1,4 +1,3 @@
-/****** Object:  StoredProcedure [dbo].[Id_getAllIndikasiDenda]    Script Date: 4/24/2025 10:21:14 AM ******/
 SET
    ANSI_NULLS ON
 GO

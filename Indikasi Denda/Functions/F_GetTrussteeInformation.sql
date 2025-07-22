@@ -1,6 +1,3 @@
-USE [antasenaDBTest]
-GO
-   /****** Object:  UserDefinedFunction [dbo].[F_GetTrussteeInformation] ******/
 SET
    ANSI_NULLS ON
 GO
