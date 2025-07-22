@@ -1,6 +1,3 @@
-USE [antasenaDBTest]
-GO
-  /****** Object:  StoredProcedure [dbo].[tp_getAllTipePeriodeByID]    Script Date: 7/13/2025 3:31:34 PM ******/
 SET
   ANSI_NULLS ON
 GO
@@ -101,9 +98,15 @@ SELECT
   PeriodNameOri,
   FgMove,
   format(convert(date, Periodedata), 'dd-MM-yyyy') as Periodedata,
-  format(convert(date, TanggalBukaPelaporan), 'dd-MM-yyyy') as TanggalBukaPelaporan,
+  format(
+    convert(date, TanggalBukaPelaporan),
+    'dd-MM-yyyy'
+  ) as TanggalBukaPelaporan,
   JamBukaPelaporan,
-  format(convert(date, TanggalTutupPelaporan), 'dd-MM-yyyy') as TanggalTutupPelaporan,
+  format(
+    convert(date, TanggalTutupPelaporan),
+    'dd-MM-yyyy'
+  ) as TanggalTutupPelaporan,
   JamTutupPelaporan,
   UseKoreksi,
   JumlahHariKoreksi,

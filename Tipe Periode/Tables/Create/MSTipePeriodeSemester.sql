@@ -1,4 +1,3 @@
-/****** Object:  Table [dbo].[MSTipePeriodeSemesteran]    Script Date: 7/13/2025 7:26:21 AM ******/
 SET
 	ANSI_NULLS ON
 GO

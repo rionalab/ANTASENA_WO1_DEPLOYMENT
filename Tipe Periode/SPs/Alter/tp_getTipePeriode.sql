@@ -1,6 +1,3 @@
-USE [antasenaDBTest]
-GO
-  /****** Object:  StoredProcedure [dbo].[tp_getTipePeriode]    Script Date: 7/13/2025 7:50:08 AM ******/
 SET
   ANSI_NULLS ON
 GO

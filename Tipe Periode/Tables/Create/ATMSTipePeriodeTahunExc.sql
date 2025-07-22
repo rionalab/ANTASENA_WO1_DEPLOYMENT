@@ -1,4 +1,3 @@
-/****** Object:  Table [dbo].[ATMSTipePeriodeTahunExc]    Script Date: 4/24/2025 9:48:21 AM ******/
 SET
 	ANSI_NULLS ON
 GO

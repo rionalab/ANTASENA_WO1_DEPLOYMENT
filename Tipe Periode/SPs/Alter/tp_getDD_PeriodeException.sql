@@ -1,6 +1,3 @@
-USE [antasenaDBTest]
-GO
-	/****** Object:  StoredProcedure [dbo].[tp_getDD_PeriodeException]    Script Date: 6/24/2025 11:54:50 AM ******/
 SET
 	ANSI_NULLS ON
 GO
